@@ -1,0 +1,13 @@
+{
+  "PAGES": {
+    "PICKUP": {
+      "TITLE": "Select a backup file",
+      "EMPTY": "No backup found",
+      "LOADING": "Loading..."
+    },
+    "HOME": {
+      "TITLE": "Choose a conversation",
+      "MESSAGE": "In the side menu you can choose a conversation to view the conversation"
+    }
+  }
+}

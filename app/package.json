@@ -1,0 +1,11 @@
+{
+  "name": "wa-explorer",
+  "version": "1.0.0",
+  "main": "main.js",
+  "private": true,
+  "dependencies": {
+    "@electron/remote": "1.2.0",
+    "sql.js": "^1.6.1",
+    "trilogy": "^2.0.5"
+  }
+}

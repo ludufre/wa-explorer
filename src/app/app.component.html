@@ -1,0 +1,20 @@
+<ion-app>
+  <ion-split-pane contentId="main-content">
+    <ion-menu contentId="main-content" type="overlay" [disabled]="!!!data.sessions || data.sessions.length === 0">
+      <ion-content>
+        <ion-list id="inbox-list">
+          <ion-menu-toggle auto-hide="false" *ngFor="let s of data.sessions | orderBy: 'last' : true; let i = index">
+            <ion-item routerDirection="root" [routerLink]="[s.contact]" lines="none" detail="false"
+              routerLinkActive="selected">
+              <ion-avatar>
+                <img *ngIf="!!s.picture" [src]="s.picture">
+              </ion-avatar>
+              <ion-label>{{ s.name }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

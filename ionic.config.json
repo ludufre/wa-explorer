@@ -1,0 +1,7 @@
+{
+  "name": "wa-explorer",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

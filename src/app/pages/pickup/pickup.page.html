@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ 'PAGES.PICKUP.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <fa-icon icon="sync"></fa-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'PAGES.PICKUP.TITLE' | translate }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="ionViewDidEnter()">
+          <fa-icon icon="sync"></fa-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container" class="ion-padding">
+    <ng-template [ngIf]="loaded">
+      <ion-list class="round" lines="full" *ngIf="options.length > 0">
+        <ion-item *ngFor="let opt of options | orderBy: 'date'" button (click)="select(opt)" [detail]="true">
+          <ion-label>
+            <h1>{{ opt.name }}</h1>
+            <h2>{{ opt.device }} / {{ opt.version }} / {{ opt.serial }}</h2>
+            <h3>{{ opt.date | amDateFormat: 'LL, LT' }} ({{ opt.date | amTimeAgo }})</h3>
+            <p>{{ opt.path }}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <h2 color="primary" *ngIf="options.length === 0">{{ 'PAGES.PICKUP.EMPTY' | translate }}</h2>
+    </ng-template>
+
+    <h2 color="primary" *ngIf="!loaded">{{ 'PAGES.PICKUP.LOADING' | translate }}</h2>
+  </div>
+</ion-content>
