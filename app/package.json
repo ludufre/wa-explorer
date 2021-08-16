@@ -5,6 +5,8 @@
   "private": true,
   "dependencies": {
     "@electron/remote": "1.2.0",
+    "moment": "^2.29.1",
+    "plist": "^3.0.3",
     "sql.js": "^1.6.1",
     "trilogy": "^2.0.5"
   }
