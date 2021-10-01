@@ -49,6 +49,8 @@ db.all('SELECT file FROM Files', [], (err, result) => {
     })
   });
 
+  db.close();
+
   console.log(last);
   return 0;
 });
