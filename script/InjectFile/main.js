@@ -74,15 +74,15 @@ const bin = bplistCreator({
         UID: 2
       },
       'UserID': 501,
-      'Mode': -32348,
+      'Mode': 33188, // Folder: 78468
       'LastModified': mtime,
-      'Size': info.size,
+      'Size': info.size, // Folder: 0
       'InodeNumber': +inode,
       'LastStatusChange': mtime,
       'RelativePath': {
         UID: 1
       },
-      'ProtectionClass': 3,
+      'ProtectionClass': 3, // Folder: 0
       'Birth': mtime,
       'GroupID': 501
     }
