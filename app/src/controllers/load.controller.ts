@@ -169,7 +169,8 @@ class LoadController {
             return null;
           }
 
-          return 'data:image/jpg;base64,' + fs.readFileSync(file, 'base64');
+          return `file:///${file}`;
+          // return 'data:image/jpg;base64,' + fs.readFileSync(file, 'base64');
         }
 
         return {
