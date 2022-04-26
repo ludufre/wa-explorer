@@ -17,16 +17,16 @@ const file = process.argv[3];
 const appDomain = process.argv[4];
 const relativePath = process.argv[5];
 const inode = process.argv[6];
-const fileID = shasum.update(appDomain + '-' + relativePath).digest('hex');
+const fileID = shasum.update(appDomain + '-' + (relativePath === 'NULL' ? '' : relativePath)).digest('hex');
 const destination = path.join(backupPath, fileID.substr(0, 2), fileID);
 
 if (!fs.existsSync(path.join(backupPath, 'Manifest.db'))) {
-  console.log('Not a valida backup path. Manifest.db not found.');
+  console.log('Not a valid backup path. Manifest.db not found.');
   return 1;
 }
 
-if (!fs.existsSync(file)) {
-  console.log('Not a valida file path. File not found.');
+if (!fs.existsSync(file) && file !== 'folder') {
+  console.log('Not a valid file path. File not found.');
   return 1;
 }
 
@@ -44,7 +44,10 @@ if (fs.existsSync(destination)) {
   console.log('Destinationm file already exists. ' + destination);
   return 1;
 }
-fs.copyFileSync(file, destination);
+
+if (file !== 'folder') {
+  fs.copyFileSync(file, destination);
+}
 
 let db;
 try {
@@ -54,58 +57,104 @@ try {
   return 1;
 }
 
-const info = fs.statSync(file);
-const mtime = Math.floor(info.mtimeMs / 1000);
+let bin;
+if (file === 'folder') {
+  const mtime = Math.round(Date.now() / 1000);
 
-const bin = bplistCreator({
-  '$version': 100000,
-  '$objects': [
-    '$null',
-    relativePath,
-    {
-      '$classname': 'MBFile',
-      '$classes': [
-        'MBFile',
-        'NSObject'
-      ],
-    },
-    {
-      '$class': {
-        UID: 2
+  bin = bplistCreator({
+    '$version': 100000,
+    '$objects': [
+      '$null',
+      {
+        '$class': {
+          UID: 3
+        },
+        'LastModified': mtime,
+        'Flags': 0,
+        'GroupID': 501,
+        'LastStatusChange': mtime,
+        'Birth': mtime,
+        'Size': 0,
+        'InodeNumber': +inode,
+        'Mode': 16877, // talves: 78468,
+        'UserID': 501,
+        'ProtectionClass': 0,
+        'RelativePath': {
+          UID: 2
+        },
       },
-      'UserID': 501,
-      'Mode': 33188, // Folder: 78468
-      'LastModified': mtime,
-      'Size': info.size, // Folder: 0
-      'InodeNumber': +inode,
-      'LastStatusChange': mtime,
-      'RelativePath': {
+      '',
+      {
+        '$classname': 'MBFile',
+        '$classes': [
+          'MBFile',
+          'NSObject'
+        ],
+      },
+    ],
+    '$archiver': 'NSKeyedArchiver',
+    '$top': {
+      'root': {
         UID: 1
+      }
+    }
+  });
+
+  // fs.writeFileSync(path.join(backupPath, '../folder.plist'), bin, 'binary');
+
+} else {
+  const info = fs.statSync(file);
+  const mtime = Math.floor(info.mtimeMs / 1000);
+
+  bin = bplistCreator({
+    '$version': 100000,
+    '$objects': [
+      '$null',
+      relativePath,
+      {
+        '$classname': 'MBFile',
+        '$classes': [
+          'MBFile',
+          'NSObject'
+        ],
       },
-      'ProtectionClass': 3, // Folder: 0
-      'Birth': mtime,
-      'GroupID': 501
+      {
+        '$class': {
+          UID: 2
+        },
+        'UserID': 501,
+        'Mode': 33188, // Folder: 78468
+        'LastModified': mtime,
+        'Size': info.size, // Folder: 0
+        'InodeNumber': +inode,
+        'LastStatusChange': mtime,
+        'RelativePath': {
+          UID: 1
+        },
+        'ProtectionClass': 3, // Folder: 0
+        'Birth': mtime,
+        'GroupID': 501
+      }
+    ],
+    '$archiver': 'NSKeyedArchiver',
+    '$top': {
+      'root': {
+        UID: 3
+      }
     }
-  ],
-  '$archiver': 'NSKeyedArchiver',
-  '$top': {
-    'root': {
-      UID: 3
-    }
-  }
-});
+  });
+}
 
-const hex = bin.toString('hex');
-
+// const hex = bin.toString('hex');
 // console.log(hex);
 // return 0;
 
 db.run('INSERT INTO Files (fileID, domain, relativePath, flags, file) VALUES ($fileID, $domain, $relativePath, $flags, $file)', {
   $fileID: fileID,
   $domain: appDomain,
-  $relativePath: relativePath,
-  $flags: 1,
-  $file: bin
+  $relativePath: relativePath === 'NULL' ? '' : relativePath,
+  $flags: file === 'folder' ? 2 : 1,
+    $file: bin
 }, (err, success) => {
   if (err) {
     console.log('Failed to insert file data.');
