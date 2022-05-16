@@ -51,7 +51,7 @@ export class PickupPage implements OnInit {
         this.g.alert(ret?.msg || 'Failed! Try again.', 'Oh!', 'error');
       }
     }, (err) => {
-      this.g.alert(JSON.stringify(err) || 'Failed! Try again. 2', 'Oh!', 'error');
+      this.g.alert(err?.msg || 'Failed! Try again.', 'Oh!', 'error');
     });
   }
 

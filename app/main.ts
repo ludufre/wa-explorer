@@ -3,9 +3,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as url from 'url';
 import { Backend } from './src';
+import * as log from 'electron-log';
 
 // Initialize remote module
 require('@electron/remote/main').initialize();
+
+Object.assign(console, log.functions);
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -15,7 +18,6 @@ function createWindow(): BrowserWindow {
 
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
-
 
   // Create the browser window.
   win = new BrowserWindow({

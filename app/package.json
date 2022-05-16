@@ -10,9 +10,9 @@
     "@electron/remote": "2.0.8",
     "better-sqlite3": "7.5.2",
     "bplist-parser": "0.3.2",
+    "electron-log": "4.4.7",
     "moment": "^2.29.3",
-    "plist": "^3.0.5",
-    "sql.js": "^1.6.2"
+    "plist": "^3.0.5"
   },
   "devDependencies": {
     "@types/better-sqlite3": "7.5.0",
