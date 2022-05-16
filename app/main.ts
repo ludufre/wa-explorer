@@ -16,26 +16,29 @@ function createWindow(): BrowserWindow {
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
+
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
+    // x: 0,
+    // y: 0,
+    // width: size.width,
+    // height: size.height,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
       contextIsolation: false,  // false if you want to run e2e test with Spectron
-      enableRemoteModule: true, // true if you want to run e2e test with Spectron or use remote module in renderer context (ie. Angular)
       webSecurity: false
     },
   });
 
-
   if (serve) {
     win.webContents.openDevTools();
-    require('electron-reload')(__dirname, {
-      electron: require(path.join(__dirname, '/../node_modules/electron'))
+    const debug = require('electron-debug');
+    debug();
+
+    require('electron-reloader')(module, {
+      debug: true,
+      ignore: ['src']
     });
     win.loadURL('http://localhost:4200');
   } else {
@@ -77,6 +80,7 @@ function registerProtocol() {
   });
 }
 
+
 try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
@@ -98,7 +102,7 @@ try {
   });
 
   app.on('activate', () => {
-    // On OS X it's common to re-create a window in t\he app when the
+    // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (win === null) {
       createWindow();

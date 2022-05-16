@@ -3,7 +3,12 @@
     "PICKUP": {
       "TITLE": "Select a backup file",
       "EMPTY": "No backup found",
-      "LOADING": "Loading..."
+      "LOADING": "Loading...",
+      "FAIL": "Failed to load",
+      "INVALID_INFO": "Invalid meta data",
+      "INVALID_BACKUP": "Invalid backup data",
+      "INVALID_MANIFEST": "Invalid Manifest",
+      "INVALID_MISSING": "No WhatsApp data"
     },
     "HOME": {
       "TITLE": "Choose a conversation",

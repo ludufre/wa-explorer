@@ -1,12 +1,13 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, dialog, ipcMain } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as plist from 'plist';
 import * as funcs from '../utils/funcs';
 import moment from 'moment';
-import { connect } from 'trilogy'
 import IBackup from '../interfaces/backup.interface';
+import bplist from 'bplist-parser';
+import BetterSqlite3 from 'better-sqlite3';
 
 class LoadController {
   constructor() {
@@ -15,65 +16,41 @@ class LoadController {
     ipcMain.handle(
       'load',
       async (res, args) => {
-        let backupDir = '';
+
+        // const dirs: string[] = dialog.showOpenDialogSync(BrowserWindow.fromWebContents (res.sender), {
+        //   properties: ['openDirectory', 'showHiddenFiles']
+        // });
+        // console.log(dirs);
+        // return;
+
+        let itunes: IBackup[] = [];
+
         if (process.platform === "darwin") {
-          backupDir = path.join(os.homedir(), `Library/Application Support/MobileSync/Backup`);
-        }
+          const backupsDir = path.join(os.homedir(), `Library/Application Support/MobileSync/Backup`);
 
-        if (backupDir === '') {
-          return { ok: false, msg: `Can't determine path directory.` };
-        }
+          if (fs.existsSync(backupsDir)) {
+            let list = fs.readdirSync(backupsDir);
 
-        const list = fs.readdirSync(backupDir);
-        const out: IBackup[] = [];
+            list = list.filter(o => o !== '.DS_Store' && !o.startsWith('.'));
 
-        await funcs.asyncForEach(list, async (dir: string) => {
-          if (fs.existsSync(path.join(backupDir, dir, 'Info.plist'))) {
-            const content = fs.readFileSync(path.join(backupDir, dir, 'Info.plist'), 'utf8');
-            const parsedInfo = plist.parse(content) as any;
-
-            const db = connect(path.join(backupDir, dir, 'Manifest.db'), {
-              client: 'sql.js'
+            await funcs.asyncForEach(list, async (dir: string) => {
+              const backupDir = path.join(backupsDir, dir);
+              itunes.push(await this.handleIos(backupDir));
             });
-
-            const manifest = await db.model('Files', {
-              fileID: String,
-              domain: String,
-              relativePath: String,
-              flags: Number,
-              file: String
-            });
-
-            const query = await manifest.findOne({
-              relativePath: 'ChatStorage.sqlite',
-              domain: 'AppDomainGroup-group.net.whatsapp.WhatsApp.shared'
-            }) as IManifestFile;
-
-            db.close();
-
-            if (!!query) {
-              out.push({
-                id: parsedInfo['Unique Identifier'],
-                device: parsedInfo['Product Name'],
-                name: parsedInfo['Display Name'],
-                gsm: parsedInfo['Phone Number'],
-                serial: parsedInfo['Serial Number'],
-                version: parsedInfo['Product Version'],
-                path: path.join(backupDir, dir),
-                date: moment(parsedInfo['Last Backup Date']).toDate(),
-                chatStorage: path.join(query.fileID.substring(0, 2), query.fileID)
-              })
-            }
           }
-        });
 
-        return { ok: true, list: out };
+        }
+
+        return { ok: true, itunes };
       }
     );
 
-    ipcMain.handle(
+    ipcMain.on(
       'choose',
-      async (res, dbFile, base) => {
+      async (event, dbFile, base) => {
+
+        console.log(path.join(base, dbFile))
+        console.log(path.join(base, 'Manifest.db'));
 
         if (!fs.existsSync(path.join(base, dbFile)) || !fs.existsSync(path.join(base, 'Manifest.db'))) {
           console.log(dbFile);
@@ -81,84 +58,29 @@ class LoadController {
           return { ok: 0, msg: 'Not found' }
         }
 
-        const db = connect(path.join(base, dbFile), {
-          client: 'sql.js'
+        const db = BetterSqlite3(path.join(base, dbFile), {
+          readonly: true
         });
 
-        const db2 = connect(path.join(base, 'Manifest.db'), {
-          client: 'sql.js'
+        const db2 = BetterSqlite3(path.join(base, 'Manifest.db'), {
+          readonly: true
         });
 
-        const sessionModel = await db.model('ZWACHATSESSION', {
-          Z_PK: Number,
-          Z_ENT: Number,
-          Z_OPT: Number,
-          ZARCHIVED: Number,
-          ZCONTACTABID: Number,
-          ZFLAGS: Number,
-          ZHIDDEN: Number,
-          ZIDENTITYVERIFICATIONEPOCH: Number,
-          ZIDENTITYVERIFICATIONSTATE: Number,
-          ZMESSAGECOUNTER: Number,
-          ZREMOVED: Number,
-          ZSESSIONTYPE: Number,
-          ZSPOTLIGHTSTATUS: Number,
-          ZUNREADCOUNT: Number,
-          ZGROUPINFO: Number,
-          ZLASTMESSAGE: Number,
-          ZPROPERTIES: Number,
-          ZLASTMESSAGEDATE: Date,
-          ZLOCATIONSHARINGENDDATE: Date,
-          ZCONTACTIDENTIFIER: String,
-          ZCONTACTJID: String,
-          ZETAG: String,
-          ZLASTMESSAGETEXT: String,
-          ZPARTNERNAME: String,
-          ZSAVEDINPUT: String
-        });
+        const chats: ISession[] = db.prepare('SELECT * FROM ZWACHATSESSION WHERE ZCONTACTJID NOT LIKE \'%@status\'').all();
 
-        const manifestModel = await db2.model('Files', {
-          fileID: String,
-          domain: String,
-          relativePath: String,
-          flags: Number,
-          file: String
-        });
+        const profiles: IManifestFile[] = db2.prepare('SELECT fileID, relativePath FROM Files WHERE flags = 1 AND domain = ? AND relativePath LIKE ?').all('AppDomainGroup-group.net.whatsapp.WhatsApp.shared', 'Media/Profile/%');
 
-        const pictureModel = await db.model('ZWAPROFILEPICTUREITEM', {
-          Z_PK: Number,
-          Z_ENT: Number,
-          Z_OPT: Number,
-          ZREQUESTDATE: Date,
-          ZJID: String,
-          ZPATH: String,
-          ZPICTUREID: String
-        });
-
-        const sessionFind: ISession[] = await sessionModel.find({}) as any;
-
-        const manifestFind = await manifestModel.find({
-          flags: 1,
-          domain: 'AppDomainGroup-group.net.whatsapp.WhatsApp.shared'
-        }) as IManifestFile[];
-
-        console.log(manifestFind.length);
-
-        const profilePictures = manifestFind.filter(o => o.relativePath.startsWith('Media/Profile/')).map(o => ({
-          id: o.fileID,
-          file: o.relativePath
-        }));
-
-        const pictureFind = await pictureModel.find({}) as any;
+        const pictureFind = db.prepare('SELECT * FROM ZWAPROFILEPICTUREITEM').all();
 
         let pictureFile = pictureFind.map(o => ({
           user: o.ZJID,
-          path: profilePictures.find(f => f.file.startsWith(o.ZPATH))?.id
+          path: profiles.find(f => f.relativePath.startsWith(o.ZPATH))?.fileID
         })) as { user: string; path: string; }[]
 
         pictureFile = pictureFile.filter(o => !!o.path);
 
         db.close();
+        db2.close();
 
         const translatePicture = (p: { user: string; path: string; }) => {
           if (!!!p) return null;
@@ -170,21 +92,104 @@ class LoadController {
           }
 
           return `file:///${file}`;
-          // return 'data:image/jpg;base64,' + fs.readFileSync(file, 'base64');
         }
 
-        return {
-          ok: 1, data: sessionFind.filter(o => !o.ZCONTACTJID.endsWith('@status')).map(o => ({
+        event.reply('choosed', {
+          ok: 1, data: chats.filter(o => !o.ZCONTACTJID.endsWith('@status')).map(o => ({
             id: o.Z_PK,
             contact: o.ZCONTACTJID,
             name: o.ZPARTNERNAME,
             last: o.ZLASTMESSAGEDATE,
             picture: translatePicture(pictureFile.find(f => f.user === o.ZCONTACTJID))
           }))
-        };
+        });
 
       }
     );
+  }
+
+  async handleIos(backupDir: string): Promise<IBackup> {
+    const url = path.join(backupDir, 'Info.plist')
+    if (!fs.existsSync(url)) {
+      return {
+        path: backupDir,
+        error: 'PAGES.PICKUP.INVALID_BACKUP',
+        errorDetail: `Not found: ${url}`
+      };
+    }
+
+    const buffer = fs.readFileSync(url, 'binary');
+    const header = buffer.slice(0, 'bplist'.length).toString();
+
+    let parsedInfo: any;
+    try {
+      if (header === 'bplist') {
+        parsedInfo = (await bplist.parseFile(url))[0];
+        // console.log(parsedInfo[0]);
+      } else {
+        const content = fs.readFileSync(url, 'utf8');
+        parsedInfo = plist.parse(content);
+      }
+    } catch (err) {
+      return {
+        path: backupDir,
+        error: 'PAGES.PICKUP.INVALID_INFO',
+        errorDetail: err.message
+      };
+    }
+
+    if (!!!parsedInfo) {
+      return {
+        path: backupDir,
+        error: 'PAGES.PICKUP.INVALID_INFO',
+        errorDetail: `Can't parse Info.plist`
+      };
+    }
+
+    let query: IManifestFile;
+    try {
+      const db = BetterSqlite3(path.join(backupDir, 'Manifest.db'), {
+        readonly: true
+      });
+
+      query = db.prepare('SELECT * FROM Files WHERE relativePath = ? AND domain = ?').get('ChatStorage.sqlite', 'AppDomainGroup-group.net.whatsapp.WhatsApp.shared');
+
+      db.close();
+
+      // const manifest = await db.model('Files', {
+      //   fileID: String,
+      //   domain: String,
+      //   relativePath: String,
+      //   flags: Number,
+      //   file: String
+      // });
+
+      // query = await manifest.findOne({
+      //   relativePath: 'ChatStorage.sqlite',
+      //   domain: 'AppDomainGroup-group.net.whatsapp.WhatsApp.shared'
+      // }) as IManifestFile;
+
+      // db.close();
+    } catch (err) {
+      return {
+        path: backupDir,
+        error: 'PAGES.PICKUP.INVALID_MANIFEST',
+        errorDetail: err.message
+      };
+    }
+
+    return {
+      id: parsedInfo['Unique Identifier'],
+      device: parsedInfo['Product Name'],
+      name: parsedInfo['Display Name'],
+      gsm: parsedInfo['Phone Number'],
+      serial: parsedInfo['Serial Number'],
+      version: parsedInfo['Product Version'],
+      path: backupDir,
+      date: moment(parsedInfo['Last Backup Date']).toDate(),
+      chatStorage: !!query ? path.join(query.fileID.substring(0, 2), query.fileID) : null
+    };
+
   }
 
 }

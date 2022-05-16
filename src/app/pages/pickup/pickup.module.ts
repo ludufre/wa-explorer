@@ -5,13 +5,14 @@ import { IonicModule } from '@ionic/angular';
 import { PickupPage } from './pickup.page';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../../engine/components/shared.module';
+import { OrderPipe } from '../../engine/order.pipe';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     SharedModule,
+    IonicModule,
     RouterModule.forChild([
       {
         path: '',

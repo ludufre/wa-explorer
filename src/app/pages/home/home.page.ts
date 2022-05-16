@@ -9,6 +9,8 @@ import { ElectronService } from '../../engine/services';
 
 export class HomePage implements OnInit {
 
+  loaded = false;
+
   constructor(
     public elec: ElectronService
   ) { }

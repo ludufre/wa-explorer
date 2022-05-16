@@ -3,11 +3,18 @@
   "version": "1.0.0",
   "main": "main.js",
   "private": true,
+  "scripts": {
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
+  },
   "dependencies": {
-    "@electron/remote": "1.2.0",
-    "moment": "^2.29.1",
-    "plist": "^3.0.3",
-    "sql.js": "^1.6.1",
-    "trilogy": "^2.0.5"
+    "@electron/remote": "2.0.8",
+    "better-sqlite3": "7.5.2",
+    "moment": "^2.29.3",
+    "plist": "^3.0.5",
+    "sql.js": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "7.5.0",
+    "electron-rebuild": "3.2.7"
   }
 }

@@ -3,7 +3,8 @@
     "PICKUP": {
       "TITLE": "Escolha um arquivo de backup",
       "EMPTY": "Nenhum backup encontrado",
-      "LOADING": "Carregando..."
+      "LOADING": "Carregando...",
+      "FAIL": "Falha ao carregar"
     },
     "HOME": {
       "TITLE": "Escolha uma conversa",

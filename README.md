@@ -10,31 +10,34 @@
 
 ---
 
-[features](#features) &middot; [installation](#installation) &middot; [usage](#usage) &middot; [contributing](#contributing) &middot; [license](#license)
+[features](#features) &middot; [usage](#usage) &middot; [build](#build) &middot; [contributing](#contributing) &middot; [license](#license)
 
 ---
 
 ## features
 
-- :link: **to do**
+- [x] iOS: Read conversations and media
+- [ ] iOS: Export conversations and media
+- [ ] iOS: Import conversations
+- [ ] iOS: Import media
+- [ ] iOS: Merge conversation and media
+- [ ] iOS: Convert Android to iOS
+- [ ] Android: Convert iOS to Android
 
-  fill this...
+## usage
 
-## installation
+Donwload latest [release](https://github.com/ludufre/releases).
 
-to do
+## build
+
+- Clone this repository: `git clone https://github.com/ludufre/wa-explorer.git`
+- Install dependencies: `yarn install`
+- Execute: `yarn start`
 
 ## contributing
 
-This project is open to contributions of all kinds! Don't worry if you're
-not 100% up to speed on the process &mdash; there's a short outline in the
-[Contributor Guide](.github/contributing.md).
-
-You'll also find a reference for the set of labels used to categorize issues,
-with descriptions of each.
-([Contributor Guide - issue labels](.github/contributing.md#labels))
-
-Also, please read and follow the project's [Code of Conduct](.github/code_of_conduct.md).
+This project is open to contributions of all kinds!
+Please read and follow the project's [Code of Conduct](CODE_OF_DONDUCT.md).
 
 ## license
 

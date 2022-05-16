@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { DataService, ElectronService, ISession } from '../../engine/services';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DataService, ElectronService, GlobalService, ISession } from '../../engine/services';
 import IBackup from '../../../../app/src/interfaces/backup.interface';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { CustomTranslatePipe } from '../../engine/translate.pipe';
 
 @Component({
   selector: 'app-pickup',
@@ -16,18 +18,35 @@ export class PickupPage implements OnInit {
 
   constructor(
     public elec: ElectronService,
-    public data: DataService
+    public data: DataService,
+    public g: GlobalService,
+    public translate: TranslatePipe
   ) { }
 
   ngOnInit() {
+    this.elec.ipcRenderer.on('choosed', (event, ret) => {
+      console.log(ret);
+      if (ret.ok) {
+
+        this.data.sessions = ret.data;
+
+        this.loaded = true;
+      } else {
+        console.log(ret?.msg || 'Failed! Try again.');
+      }
+    });
   }
 
   ionViewDidEnter() {
     this.loaded = false;
     this.options = [];
-    this.elec.ipcRenderer.invoke('load').then((ret: { ok: boolean; msg: string; list: IBackup[] }) => {
+    this.elec.ipcRenderer.invoke('load').then((ret: { ok: boolean; msg: string; itunes: IBackup[] }) => {
+      console.log(ret.itunes);
       if (ret.ok) {
-        this.options = ret.list;
+        this.options = ret.itunes.map(o => ({
+          ...o,
+          date: o.date || new Date('1900-01-01')
+        }));
         this.loaded = true;
       } else {
         console.log(ret?.msg || 'Failed! Try again.');
@@ -38,17 +57,28 @@ export class PickupPage implements OnInit {
   }
 
   select(opt: IBackup) {
-    this.elec.ipcRenderer.invoke('choose', opt.chatStorage, opt.path).then((ret: { ok: boolean; msg: string; data: ISession[] }) => {
-      if (ret.ok) {
+    if (!!opt.error) {
+      this.g.alert(!!opt?.errorDetail ? opt.errorDetail : 'No more details', this.translate.transform(opt.error), 'error');
+      return;
+    }
+    if (!!!opt.chatStorage) {
+      this.g.alert(this.translate.transform('PAGES.PICKUP.INVALID_MISSING'), 'Oh!', 'info');
+      return;
+    }
 
-        this.data.sessions = ret.data;
+    this.elec.ipcRenderer.send('choose', opt.chatStorage, opt.path);
 
-        this.loaded = true;
-      } else {
-        console.log(ret?.msg || 'Failed! Try again.');
-      }
-    }, (err) => {
-      console.log(err?.msg || 'Failed! Try again.');
-    });
+    // this.elec.ipcRenderer.invoke('choose', opt.chatStorage, opt.path).then((ret: { ok: boolean; msg: string; data: ISession[] }) => {
+    //   if (ret.ok) {
+
+    //     this.data.sessions = ret.data;
+
+    //     this.loaded = true;
+    //   } else {
+    //     console.log(ret?.msg || 'Failed! Try again.');
+    //   }
+    // }, (err) => {
+    //   console.log(err?.msg || 'Failed! Try again.');
+    // });
   }
 }

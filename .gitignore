@@ -6,6 +6,7 @@
 /out-tsc
 /app-builds
 /release
+main.js
 src/**/*.js
 !src/karma.conf.js
 *.js.map
@@ -30,6 +31,7 @@ node_modules
 !.vscode/extensions.json
 
 # misc
+/.angular/cache
 /.sass-cache
 /connect.lock
 /coverage
@@ -42,9 +44,12 @@ testem.log
 /e2e/*.js
 !/e2e/protractor.conf.js
 /e2e/*.map
-package-lock.json
+/e2e/tracing
+/e2e/screenshots
 
 # System Files
 .DS_Store
 Thumbs.db
 
+# Others
+_temp/

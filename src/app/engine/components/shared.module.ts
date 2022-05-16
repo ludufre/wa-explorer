@@ -1,30 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MomentModule } from 'ngx-moment';
-import { OrderModule } from 'ngx-order-pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { OrderPipe } from '../order.pipe';
 
 @NgModule({
   declarations: [
+    OrderPipe
   ],
   imports: [
     CommonModule,
-    TranslateModule,
     FormsModule,
     IonicModule,
-    OrderModule,
     MomentModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    TranslateModule
   ],
   exports: [
     TranslateModule,
     FormsModule,
-    OrderModule,
     MomentModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    OrderPipe
+  ],
+  providers: [
+    TranslatePipe
   ]
 })
 export class SharedModule { }

@@ -3,9 +3,9 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
-    // "emitDecoratorMetadata": true,
+    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "module": "commonjs",
     "esModuleInterop": true,
     "target": "es5",
     "types": [
@@ -24,11 +24,5 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
-  ],
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
+  ]
 }
