@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "es2015",
     "types": [
       "node"
     ],
