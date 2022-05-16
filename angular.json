@@ -156,11 +156,22 @@
             "inlineStyleLanguage": "scss",
             "scripts": [],
             "styles": [
-              "src/styles.scss"
+              "src/theme/variables.scss",
+              "src/global.scss"
             ],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              },
+              {
+                "glob": "**/*",
+                "input": "embedded",
+                "output": "./embedded"
+              }
             ],
             "customWebpackConfig": {
               "path": "./angular.webpack.js",

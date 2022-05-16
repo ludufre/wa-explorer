@@ -1,8 +1,8 @@
 
-import { Pipe, PipeTransform } from "@angular/core";
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: "orderBy",
+  name: 'orderBy',
   pure: false,
 })
 export class OrderPipe implements PipeTransform {
@@ -12,7 +12,7 @@ export class OrderPipe implements PipeTransform {
    * @param value
    */
   static isString(value: any): boolean {
-    return typeof value === "string" || value instanceof String;
+    return typeof value === 'string' || value instanceof String;
   }
 
   /**
@@ -56,13 +56,14 @@ export class OrderPipe implements PipeTransform {
 
   /**
    * Parse expression, split into items
+   *
    * @param expression
-   * @returns {string[]}
+   * @returns
    */
   static parseExpression(expression: string): string[] {
-    expression = expression.replace(/\[(\w+)\]/g, ".$1");
-    expression = expression.replace(/^\./, "");
-    return expression.split(".");
+    expression = expression.replace(/\[(\w+)\]/g, '.$1');
+    expression = expression.replace(/^\./, '');
+    return expression.split('.');
   }
 
   /**
@@ -70,7 +71,7 @@ export class OrderPipe implements PipeTransform {
    *
    * @param object
    * @param expression
-   * @returns {any}
+   * @returns
    */
   static getValue(object: any, expression: string[]): any {
     for (let i = 0, n = expression.length; i < n; ++i) {
@@ -81,7 +82,7 @@ export class OrderPipe implements PipeTransform {
       if (!(k in object)) {
         return;
       }
-      if (typeof object[k] === "function") {
+      if (typeof object[k] === 'function') {
         object = object[k]();
       } else {
         object = object[k];
@@ -112,7 +113,7 @@ export class OrderPipe implements PipeTransform {
     expression?: any,
     reverse?: boolean,
     isCaseInsensitive: boolean = false,
-    comparator?: Function
+    comparator?: any
   ): any {
     if (!value) {
       return value;
@@ -138,7 +139,7 @@ export class OrderPipe implements PipeTransform {
       );
     }
 
-    if (typeof value === "object") {
+    if (typeof value === 'object') {
       return this.transformObject(
         Object.assign({}, value),
         expression,
@@ -159,24 +160,24 @@ export class OrderPipe implements PipeTransform {
    * @param reverse
    * @param isCaseInsensitive
    * @param comparator
-   * @returns {Type[]}
+   * @returns
    */
   private sortArray<Type>(
     array: Type[],
     expression?: any,
     reverse?: boolean,
     isCaseInsensitive?: boolean,
-    comparator?: Function
+    comparator?: any
   ): Type[] {
-    const isDeepLink = expression && expression.indexOf(".") !== -1;
+    const isDeepLink = expression && expression.indexOf('.') !== -1;
 
     if (isDeepLink) {
       expression = OrderPipe.parseExpression(expression);
     }
 
-    let compareFn: Function;
+    let compareFn: any;
 
-    if (comparator && typeof comparator === "function") {
+    if (comparator && typeof comparator === 'function') {
       compareFn = comparator;
     } else {
       compareFn = isCaseInsensitive
@@ -217,14 +218,14 @@ export class OrderPipe implements PipeTransform {
    * @param reverse
    * @param isCaseInsensitive
    * @param comparator
-   * @returns {any[]}
+   * @returns
    */
   private transformObject(
     value: any | any[],
     expression?: any,
     reverse?: boolean,
     isCaseInsensitive?: boolean,
-    comparator?: Function
+    comparator?: any
   ): any {
     const parsedExpression = OrderPipe.parseExpression(expression);
     let lastPredicate = parsedExpression.pop();
@@ -252,27 +253,25 @@ export class OrderPipe implements PipeTransform {
    * Apply multiple expressions
    *
    * @param value
-   * @param {any[]} expressions
-   * @param {boolean} reverse
-   * @param {boolean} isCaseInsensitive
-   * @param {Function} comparator
-   * @returns {any}
+   * @param expressions
+   * @param reverse
+   * @param isCaseInsensitive
+   * @param comparator
+   * @returns
    */
   private multiExpressionTransform(
     value: any,
     expressions: any[],
     reverse: boolean,
     isCaseInsensitive: boolean = false,
-    comparator?: Function
+    comparator?: any
   ): any {
-    return expressions.reverse().reduce((result: any, expression: any) => {
-      return this.transform(
-        result,
-        expression,
-        reverse,
-        isCaseInsensitive,
-        comparator
-      );
-    }, value);
+    return expressions.reverse().reduce((result: any, expression: any) => this.transform(
+      result,
+      expression,
+      reverse,
+      isCaseInsensitive,
+      comparator
+    ), value);
   }
 }

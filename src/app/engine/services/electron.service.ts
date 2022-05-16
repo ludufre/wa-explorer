@@ -17,10 +17,6 @@ export class ElectronService {
   childProcess: typeof childProcess;
   fs: typeof fs;
 
-  get isElectron(): boolean {
-    return !!(window && window.process && window.process.type);
-  }
-
   constructor() {
     // Conditional imports
     if (this.isElectron) {
@@ -35,5 +31,9 @@ export class ElectronService {
       // If you want to use remote object in renderer process, please set enableRemoteModule to true in main.ts
       this.remote = window.require('@electron/remote');
     }
+  }
+
+  get isElectron(): boolean {
+    return !!(window && window.process && window.process.type);
   }
 }

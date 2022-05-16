@@ -10,7 +10,7 @@
 
 ---
 
-[features](#features) &middot; [usage](#usage) &middot; [build](#build) &middot; [contributing](#contributing) &middot; [license](#license)
+[features](#features) &middot; [usage](#usage) &middot; [build](#build) &middot; [todo](#todo) &middot; [contributing](#contributing) &middot; [license](#license)
 
 ---
 
@@ -26,13 +26,17 @@
 
 ## usage
 
-Donwload latest [release](https://github.com/ludufre/releases).
+Download latest [release](https://github.com/ludufre/wa-explorer/releases).
 
 ## build
 
 - Clone this repository: `git clone https://github.com/ludufre/wa-explorer.git`
 - Install dependencies: `yarn install`
 - Execute: `yarn start`
+
+## todo
+
+- [ ] Write tests (need help)
 
 ## contributing
 
@@ -41,4 +45,4 @@ Please read and follow the project's [Code of Conduct](CODE_OF_DONDUCT.md).
 
 ## license
 
-See [license](license)
+See [license](LICENSE.md)

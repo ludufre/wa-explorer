@@ -1,8 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DataService, ElectronService, GlobalService, ISession } from '../../engine/services';
+import { Component, OnInit } from '@angular/core';
+import { DataService, ElectronService, GlobalService } from '../../engine/services';
 import IBackup from '../../../../app/src/interfaces/backup.interface';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { CustomTranslatePipe } from '../../engine/translate.pipe';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pickup',
@@ -49,10 +48,10 @@ export class PickupPage implements OnInit {
         }));
         this.loaded = true;
       } else {
-        console.log(ret?.msg || 'Failed! Try again.');
+        this.g.alert(ret?.msg || 'Failed! Try again.', 'Oh!', 'error');
       }
     }, (err) => {
-      console.log(err?.msg || 'Failed! Try again.');
+      this.g.alert(JSON.stringify(err) || 'Failed! Try again. 2', 'Oh!', 'error');
     });
   }
 
