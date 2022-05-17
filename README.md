@@ -36,6 +36,8 @@ Download latest [release](https://github.com/ludufre/wa-explorer/releases).
 
 ## todo
 
+- [ ] Create a beautiful interface
+- [ ] Convert all texts to i18n 
 - [ ] Write tests (need help)
 
 ## contributing

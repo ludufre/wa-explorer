@@ -26,7 +26,11 @@
 
   <div id="container" class="ion-padding">
     <ng-template [ngIf]="loaded">
+      <ion-button (click)="dialog()">Pick folder</ion-button>
       <ion-list class="round" lines="full" *ngIf="options.length > 0">
+        <ion-header>
+          iTunes Backup
+        </ion-header>
         <ion-item *ngFor="let opt of options | orderBy : 'date' : true" button (click)="select(opt)"
           [detail]="!!!opt.error">
           <ion-label>

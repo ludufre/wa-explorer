@@ -7,7 +7,7 @@
             <ion-item routerDirection="root" [routerLink]="[s.contact]" lines="none" detail="false"
               routerLinkActive="selected">
               <ion-avatar>
-                <img *ngIf="!!s.picture" [src]="s.picture">
+                <img [src]="s.picture || 'https://ui-avatars.com/api/?background=438ECF&color=fff&name='+s.name+'&length=2'">
               </ion-avatar>
               <ion-label>{{ s.name }}</ion-label>
             </ion-item>

@@ -106,6 +106,30 @@ class LoadController {
 
       }
     );
+
+    ipcMain.handle(
+      'pickup-dialog',
+      async (event) => {
+        const paths: string[] = dialog.showOpenDialogSync(BrowserWindow.fromWebContents(event.sender), {
+          title: 'Backup location',
+          properties: ['openDirectory'],
+          message: 'Can be an iTunes Backup or Android WhatsApp dump'
+        });
+        if (paths.length === 0) {
+          return { ok: 0, msg: null };
+        }
+        const path = paths[0];
+
+        console.log(path);
+        const found = await this.handleIos(path);
+
+        if (!!!found?.chatStorage) {
+          return { ok: 0, msg: found.error };
+        }
+
+        return { ok: 1, path, db: found.chatStorage };
+      }
+    )
   }
 
   async handleIos(backupDir: string): Promise<IBackup> {

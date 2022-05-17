@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { DataService, ElectronService, GlobalService } from '../../engine/services';
 import IBackup from '../../../../app/src/interfaces/backup.interface';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -19,17 +19,18 @@ export class PickupPage implements OnInit {
     public elec: ElectronService,
     public data: DataService,
     public g: GlobalService,
-    public translate: TranslatePipe
+    public translate: TranslatePipe,
+    public zone: NgZone
   ) { }
 
   ngOnInit() {
     this.elec.ipcRenderer.on('choosed', (event, ret) => {
       console.log(ret);
       if (ret.ok) {
-
-        this.data.sessions = ret.data;
-
-        this.loaded = true;
+        this.zone.run(() => {
+          this.data.sessions = ret.data;
+          this.loaded = true;
+        });
       } else {
         console.log(ret?.msg || 'Failed! Try again.');
       }
@@ -79,5 +80,17 @@ export class PickupPage implements OnInit {
     // }, (err) => {
     //   console.log(err?.msg || 'Failed! Try again.');
     // });
+  }
+
+  dialog() {
+    this.elec.ipcRenderer.invoke('pickup-dialog').then(ret => {
+      if (ret.ok === 0) {
+        if (!!ret?.msg) {
+          this.g.alert(ret.msg, 'Oh!', 'error');
+        }
+        return;
+      }
+      this.elec.ipcRenderer.send('choose', ret.db, ret.path);
+    });
   }
 }
