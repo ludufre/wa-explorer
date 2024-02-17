@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ludufre/wa-explorer/master/src/assets/icon/favicon.png?sanitize=true" width="420" alt="wa-explorer">
+  <img src="https://github.com/ludufre/wa-explorer/blob/main/src/assets/icons/favicon.png?raw=true" width="64" alt="wa-explorer">
   <br>
   <img src="https://flat.badgen.net/github/release/ludufre/wa-explorer" alt="Version">
   <img src="https://flat.badgen.net/github/license/ludufre/wa-explorer" alt="License">
@@ -31,8 +31,8 @@ Download latest [release](https://github.com/ludufre/wa-explorer/releases).
 ## build
 
 - Clone this repository: `git clone https://github.com/ludufre/wa-explorer.git`
-- Install dependencies: `yarn install`
-- Execute: `yarn start`
+- Install dependencies: `pnpm install`
+- Execute: `pnpm run build`
 
 ## todo
 

@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'PAGES.PICKUP.TITLE' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="ionViewDidEnter()">
+        <fa-icon icon="sync"></fa-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'PAGES.PICKUP.TITLE' }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="ionViewDidEnter()">
+          <fa-icon icon="sync"></fa-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container" class="ion-padding">
+    <ng-template [ngIf]="loaded">
+      <ion-button (click)="dialog()">Pick folder</ion-button>
+      @if (options.length > 0) {
+        <ion-list class="round" lines="full">
+          <ion-header>iTunes Backup</ion-header>
+          @for (opt of options | orderBy: 'date' : true; track opt) {
+            <ion-item button (click)="select(opt)" [detail]="!!!opt.error">
+              <ion-label>
+                @if (!!!opt.error) {
+                  <h1>
+                    {{ opt.name }}
+                    @if (!!!opt?.chatStorage) {
+                      <span>({{ 'PAGES.PICKUP.INVALID_MISSING' }})</span>
+                    }
+                  </h1>
+                  <h2>
+                    {{ opt.device }} / {{ opt.version }} / {{ opt.serial }}
+                  </h2>
+                  <h3>{{ opt.date }}</h3>
+                  <p>{{ opt.path }}</p>
+                } @else {
+                  <h1>
+                    <span style="color: red">{{ 'PAGES.PICKUP.FAIL' }}</span>
+                  </h1>
+                  <p>{{ opt.path }}</p>
+                  <p>{{ opt.error }}</p>
+                }
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+
+      @if (options.length === 0) {
+        <h2 color="primary">{{ 'PAGES.PICKUP.EMPTY' }}ddd</h2>
+      }
+    </ng-template>
+
+    @if (!loaded) {
+      <h2 color="primary">{{ 'PAGES.PICKUP.LOADING' }}</h2>
+    }
+  </div>
+</ion-content>

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# if [ -n "$PROCESSOR_ARCHITECTURE" -a "$PROCESSOR_ARCHITECTURE" == "AMD64" ]; then
+#   npx.cmd lint-staged
+# else
+#   . "$(dirname -- "$0")/_/husky.sh"
+#   npx lint-staged
+# fi

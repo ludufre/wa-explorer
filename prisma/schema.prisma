@@ -1,0 +1,20 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../packages/generated/client"
+  binaryTargets = ["native", "darwin", "darwin-arm64", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Config {
+  key   String @id
+  value String
+}
+
+model Background {
+  id  String @id
+  url String
+}
