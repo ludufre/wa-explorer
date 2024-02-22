@@ -27,6 +27,9 @@ import {
 } from '@ionic/angular/standalone';
 import { SharedModule } from '../engine/components/shared.module';
 import { CommonModule } from '@angular/common';
+import { utcToZonedTime } from 'date-fns-tz';
+import { Chat } from '../../../../server/interfaces/chat.interface';
+import { formatISO9075 } from 'date-fns';
 
 @Component({
   selector: 'app-pickup',
@@ -73,7 +76,12 @@ export class PickupPage implements OnInit {
       console.log(event, ret);
       if (ret.ok) {
         this.zone.run(() => {
-          this.data.sessions = ret.data;
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+          this.data.sessions = (ret.data as Chat[]).map(o => ({
+            ...o,
+            formated_date: formatISO9075(utcToZonedTime(o.last_date, timezone)),
+          })) as any;
           this.loaded = true;
         });
       } else {

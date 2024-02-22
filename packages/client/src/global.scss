@@ -24,3 +24,41 @@
 @import '@ionic/angular/css/text-alignment.css';
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
+
+html *,
+* {
+  scrollbar-color: rgba(#000000, 0.2) rgba(#ffffff, 0.1);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+::-webkit-scrollbar-thumb,
+html ::-webkit-scrollbar-thumb {
+  background-color: rgba(#000000, 0.2);
+}
+
+::-webkit-scrollbar-track,
+html ::-webkit-scrollbar-track {
+  background: rgba(#ffffff, 0.1);
+}
+
+ion-avatar super-img,
+ion-thumbnail super-img {
+  div {
+    border-radius: var(--border-radius);
+    width: 100% !important;
+    height: 100% !important;
+    img {
+      border-radius: var(--border-radius);
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      overflow: hidden;
+      overflow-clip-margin: content-box;
+    }
+  }
+}

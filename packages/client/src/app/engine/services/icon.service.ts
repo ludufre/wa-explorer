@@ -5,6 +5,7 @@ import {
   faCloudArrowUp,
   faTemperatureHigh,
   faImage,
+  faMapPin,
 } from '@fortawesome/free-solid-svg-icons';
 import { FaIconLibrary, FaConfig } from '@fortawesome/angular-fontawesome';
 
@@ -23,6 +24,7 @@ export class IconService {
       faCloudArrowUp,
       faTemperatureHigh,
       faImage,
+      faMapPin,
     );
   }
 }

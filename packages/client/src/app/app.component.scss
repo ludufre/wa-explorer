@@ -1,0 +1,107 @@
+.contacts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .contact {
+    width: 100%;
+    height: 72px;
+
+    -webkit-user-select: none;
+    user-select: none;
+
+    background-color: var(--background-default);
+    pointer-events: all;
+
+    display: flex;
+    flex-direction: row;
+
+    &:focus, &:hover {
+      background-color: var(--background-default-hover);
+    }
+
+    .avatar {
+      padding: 0 15px 0 13px;
+      display: flex;
+      ion-avatar {
+        width: 49px;
+        height: 49px;
+        align-self: center;
+      }
+    }
+
+    .content {
+      padding-right: 15px;
+      border-top: 1px var(--border-list) solid;
+      display: flex;
+      flex-basis: auto;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: center;
+      min-width: 0;
+
+      .first-line {
+        text-align: left;
+        display: flex;
+        align-items: center;
+        line-height: normal;
+
+        .name {
+          font-size: 16px;
+
+          display: flex;
+          flex-grow: 1;
+          overflow: hidden;
+          font-weight: 400;
+          line-height: 21px;
+          color: var(--primary-strong);
+          overflow-wrap: break-word;
+        }
+
+        .last-time {
+          margin-top: 3px;
+          margin-left: 6px;
+          overflow: hidden;
+          line-height: 14px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          flex: none;
+          max-width: 100%;
+          font-size: 12px;
+          color: var(--chat-meta);
+        }
+      }
+
+      .second-line {
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        min-height: 20px;
+        font-size: 13px;
+        line-height: 20px;
+        color: var(--secondary);
+
+        .last-message {
+          text-align: left;
+          background-color: initial;
+          flex-grow: 1;
+          overflow: hidden;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 20px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .pin {
+          margin-left: 6px;
+          flex: none;
+          max-width: 100%;
+          font-size: 12px;
+          line-height: 20px;
+          color: var(--chat-meta);
+        }
+      }
+    }
+  }
+}

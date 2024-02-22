@@ -6,6 +6,8 @@ import * as plist from 'plist';
 import bplist from 'bplist-parser';
 import { Backup } from '../interfaces/backup.interface';
 import BetterSqlite3 from 'better-sqlite3';
+import { Chat, ManifestFile } from '../interfaces/chat.interface';
+import { addSeconds, formatISO9075 } from 'date-fns';
 
 export default class LoadController {
   constructor() {
@@ -65,9 +67,25 @@ export default class LoadController {
 
       const chats = db
         .prepare(
-          "SELECT * FROM ZWACHATSESSION WHERE ZCONTACTJID NOT LIKE '%@status'",
+          `
+          SELECT
+          A.Z_PK AS id,
+          A.ZCONTACTJID AS contact,
+          IFNULL(B.ZPUSHNAME, A.ZPARTNERNAME) AS name,
+          C.ZPATH AS avatar,
+          A.ZLASTMESSAGEDATE AS last_date,
+          D.ZMESSAGETYPE AS last_type,
+          D.ZTEXT AS last_text
+          FROM
+          ZWACHATSESSION AS A
+          LEFT JOIN ZWAPROFILEPUSHNAME AS B ON (A.ZCONTACTJID = B.ZJID)
+          LEFT JOIN ZWAPROFILEPICTUREITEM AS C ON (C.ZJID = A.ZCONTACTJID)
+          LEFT JOIN (SELECT MAX(ZSORT), * FROM ZWAMESSAGE GROUP BY ZCHATSESSION) AS D ON (D.ZCHATSESSION = A.Z_PK)
+          WHERE
+          A.ZCONTACTJID NOT LIKE '%@status'
+          `,
         )
-        .all() as Session[];
+        .all() as Chat[];
 
       const profiles = db2
         .prepare(
@@ -78,21 +96,19 @@ export default class LoadController {
           'Media/Profile/%',
         ) as ManifestFile[];
 
-      const pictureFind = db
-        .prepare('SELECT * FROM ZWAPROFILEPICTUREITEM')
-        .all() as { ZJID: string; ZPATH: string; ZCONTACTJID: string }[];
-
-      let pictureFile = pictureFind.map(o => ({
-        user: o.ZJID,
-        path: profiles.find(f => f.relativePath.startsWith(o.ZPATH))?.fileID,
-      })) as { user: string; path: string }[];
+      let pictureFile = chats
+        .filter(f => !!f.avatar)
+        .map(o => ({
+          id: o.id,
+          path: profiles.find(f => f.relativePath.startsWith(o.avatar))?.fileID,
+        })) as { id: number; path: string }[];
 
       pictureFile = pictureFile.filter(o => !!o.path);
 
       db.close();
       db2.close();
 
-      const translatePicture = (p: { user: string; path: string }) => {
+      const translatePicture = (p: { id: number; path: string }) => {
         if (!!!p) return null;
 
         const file = path.join(base, p.path.substr(0, 2), p.path);
@@ -106,19 +122,15 @@ export default class LoadController {
 
       event.reply('choosed', {
         ok: 1,
-        data: chats
-          .filter(o => !o.ZCONTACTJID.endsWith('@status'))
-          .map(o => ({
-            id: o.Z_PK,
-            contact: o.ZCONTACTJID,
-            name: o.ZPARTNERNAME,
-            last: o.ZLASTMESSAGEDATE,
-            picture: translatePicture(
-              pictureFile.find(
-                f => f.user === o.ZCONTACTJID,
-              ) as (typeof pictureFile)[0],
-            ),
-          })),
+        data: chats.map(o => ({
+          ...o,
+          last_date: formatISO9075(
+            addSeconds(new Date(2001, 0, 1), o.last_date),
+          ),
+          avatar: translatePicture(
+            pictureFile.find(f => f.id === o.id) as (typeof pictureFile)[0],
+          ),
+        })),
       });
     });
 
@@ -237,39 +249,3 @@ export default class LoadController {
     };
   }
 }
-
-export type ManifestFile = {
-  fileID: string;
-  domain: string;
-  relativePath: string;
-  flags: number;
-  file: Blob;
-};
-
-export type Session = {
-  Z_PK: number;
-  Z_ENT: number;
-  Z_OPT: number;
-  ZARCHIVED: number;
-  ZCONTACTABID: number;
-  ZFLAGS: number;
-  ZHIDDEN: number;
-  ZIDENTITYVERIFICATIONEPOCH: number;
-  ZIDENTITYVERIFICATIONSTATE: number;
-  ZMESSAGECOUNTER: number;
-  ZREMOVED: number;
-  ZSESSIONTYPE: number;
-  ZSPOTLIGHTSTATUS: number;
-  ZUNREADCOUNT: number;
-  ZGROUPINFO: number;
-  ZLASTMESSAGE: number;
-  ZPROPERTIES: number;
-  ZLASTMESSAGEDATE: Date;
-  ZLOCATIONSHARINGENDDATE: Date;
-  ZCONTACTIDENTIFIER: string;
-  ZCONTACTJID: string;
-  ZETAG: string;
-  ZLASTMESSAGETEXT: string;
-  ZPARTNERNAME: string;
-  ZSAVEDINPUT: string;
-};

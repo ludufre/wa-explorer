@@ -6,31 +6,35 @@
       [disabled]="!!!data.sessions || data.sessions.length === 0"
     >
       <ion-content>
-        <ion-list id="inbox-list">
-          @for (s of data.sessions | orderBy: 'last' : true; track s) {
-            <ion-menu-toggle auto-hide="false">
-              <ion-item
-                routerDirection="root"
-                [routerLink]="[s.contact]"
-                lines="none"
-                detail="false"
-                routerLinkActive="selected"
-              >
+        <div class="contacts">
+          @for (s of data.sessions | orderBy: 'last_date' : true; track s) {
+            <div class="contact">
+              <div class="avatar">
                 <ion-avatar>
-                  <img
-                    [src]="
-                      s.picture ||
-                      'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' +
-                        s.name +
-                        '&length=2'
-                    "
-                  />
+                  <super-img [src]="s.avatar" />
                 </ion-avatar>
-                <ion-label>{{ s.name }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
+              </div>
+              <div class="content">
+                <div class="first-line">
+                  <div class="name">
+                    {{ s.name || 'no-name' }}
+                  </div>
+                  <div class="last-time">
+                    {{ s.last_date | dfnsParseIso | dfnsFormat: 'dd/MM/yyyy' }}
+                  </div>
+                </div>
+                <div class="second-line">
+                  <div class="last-message">
+                    {{ s.last_text }}
+                  </div>
+                  <div class="pin">
+                    <fa-icon icon="map-pin" />
+                  </div>
+                </div>
+              </div>
+            </div>
           }
-        </ion-list>
+        </div>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>

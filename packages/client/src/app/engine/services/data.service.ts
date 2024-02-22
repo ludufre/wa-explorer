@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Backup } from '../../../../../server/interfaces/backup.interface';
+import { Chat } from '../../../../../server/interfaces/chat.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +8,7 @@ import { Backup } from '../../../../../server/interfaces/backup.interface';
 export class DataService {
   backups: Backup[] = [];
   selectedBackup: Backup;
-  sessions: ISession[] = [];
+  sessions: Chat[] = [];
 }
 
 export interface ISession {
