@@ -2,6 +2,7 @@
   "PAGES": {
     "PICKUP": {
       "TITLE": "Select a backup file",
+      "BACK_TO_HOME": "Back",
       "EMPTY": "No backup found",
       "LOADING": "Loading...",
       "LOADING_CHATS": "Loading chats from backup...",
@@ -35,7 +36,8 @@
       }
     },
     "VIEWER": {
-      "BACK_TO_SELECTION": "Back"
+      "BACK_TO_SELECTION": "Back",
+      "SEARCH_PLACEHOLDER": "Search conversations"
     },
     "DETAIL": {
       "TITLE": "Conversation",

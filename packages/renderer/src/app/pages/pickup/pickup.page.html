@@ -1,6 +1,10 @@
 <ion-content class="pickup-content">
   <div class="pickup-container">
     <div class="pickup-header">
+      <ion-button (click)="backToHome()" fill="clear" size="small" class="back-button">
+        <fa-icon icon="chevron-left"></fa-icon>
+        {{ 'PAGES.PICKUP.BACK_TO_HOME' | translate }}
+      </ion-button>
       <h1>{{ 'PAGES.PICKUP.TITLE' | translate }}</h1>
       <ion-button (click)="ngOnInit()" fill="clear" size="small">
         <fa-icon icon="sync"></fa-icon>

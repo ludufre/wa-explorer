@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import {
@@ -9,6 +9,7 @@ import {
   IonLabel,
   IonRouterOutlet,
   IonButton,
+  IonSearchbar,
 } from '@ionic/angular/standalone';
 import { DataService } from '../../engine/services';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,6 +29,7 @@ import { PickupPage } from '../pickup/pickup.page';
     IonLabel,
     IonRouterOutlet,
     IonButton,
+    IonSearchbar,
     RouterLink,
     DatePipe,
     TranslatePipe,
@@ -39,8 +41,24 @@ export class ViewerComponent {
   data = inject(DataService);
   router = inject(Router);
 
+  searchQuery = signal('');
+
   get hasBackupSelected(): boolean {
     return this.data.sessions().length > 0;
+  }
+
+  filteredSessions = computed(() => {
+    const query = this.searchQuery().toLowerCase();
+    if (!query) {
+      return this.data.sessions();
+    }
+    return this.data.sessions().filter(s =>
+      s.name.toLowerCase().includes(query)
+    );
+  });
+
+  handleSearch(event: any) {
+    this.searchQuery.set(event.target.value || '');
   }
 
   handleBackToPickup() {

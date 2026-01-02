@@ -1,4 +1,5 @@
 import { Component, inject, NgZone, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   DataService,
   ElectronService,
@@ -37,11 +38,16 @@ export class PickupPage implements OnInit {
   g = inject(GlobalService);
   translate = inject(TranslateService);
   zone = inject(NgZone);
+  router = inject(Router);
 
   public folder: string;
 
   options: IBackup[] = [];
   loaded = false;
+
+  backToHome() {
+    this.router.navigate(['/']);
+  }
 
   ngOnInit() {
     this.loaded = false;

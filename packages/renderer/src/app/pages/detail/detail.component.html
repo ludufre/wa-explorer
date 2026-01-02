@@ -26,16 +26,21 @@
 
     @if (!loading && !error && messages.length > 0) {
       <div class="messages-list">
-        @for (message of messages; track message.id) {
-          <div class="message" [class.from-me]="message.isFromMe" [class.from-them]="!message.isFromMe">
-            <div class="message-bubble">
-              @if (!message.isFromMe && message.groupMember) {
-                <div class="message-sender">{{ message.groupMember }}</div>
-              }
-              <div class="message-text">{{ message.text || '(media)' }}</div>
-              <div class="message-time">{{ formatTime(message.date) }}</div>
-            </div>
+        @for (group of messageGroups; track group.dateObj) {
+          <div class="date-separator">
+            <span>{{ group.date }}</span>
           </div>
+          @for (message of group.messages; track message.id) {
+            <div class="message" [class.from-me]="message.isFromMe" [class.from-them]="!message.isFromMe">
+              <div class="message-bubble">
+                @if (!message.isFromMe && message.groupMember) {
+                  <div class="message-sender">{{ message.groupMember }}</div>
+                }
+                <div class="message-text">{{ message.text || '(media)' }}</div>
+                <div class="message-time">{{ formatTime(message.date) }}</div>
+              </div>
+            </div>
+          }
         }
       </div>
     }

@@ -47,6 +47,24 @@ app-pickup {
     }
   }
 
+  .search-container {
+    padding: 8px 12px;
+    background: var(--macos-secondary-background);
+    border-bottom: 1px solid var(--macos-separator);
+    flex-shrink: 0;
+
+    .chat-searchbar {
+      --background: var(--macos-tertiary-background);
+      --border-radius: var(--border-radius-md);
+      --box-shadow: none;
+      --icon-color: var(--macos-secondary-label);
+      --placeholder-color: var(--macos-tertiary-label);
+      --color: var(--macos-label);
+      font-size: var(--font-size-body);
+      padding: 0;
+    }
+  }
+
   .list-content {
     --background: transparent;
     flex: 1;

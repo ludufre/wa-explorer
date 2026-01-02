@@ -18,9 +18,18 @@
         </ion-button>
       </div>
 
+      <div class="search-container">
+        <ion-searchbar
+          [value]="searchQuery()"
+          (ionInput)="handleSearch($event)"
+          [placeholder]="'PAGES.VIEWER.SEARCH_PLACEHOLDER' | translate"
+          class="chat-searchbar"
+        ></ion-searchbar>
+      </div>
+
       <ion-content class="list-content">
         <ion-list class="chat-list">
-          @for (s of data.sessions(); track s.id) {
+          @for (s of filteredSessions(); track s.id) {
             <ion-item
               button
               [routerLink]="['detail', s.contact]"
