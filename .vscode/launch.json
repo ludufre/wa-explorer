@@ -10,7 +10,8 @@
       "name": "Renderer (Attach)",
       "port": 9222,
       "webRoot": "${workspaceFolder}/packages/renderer",
-      "sourceMaps": true
+      "sourceMaps": true,
+      "timeout": 30000
     },
     {
       "name": "Main",
@@ -39,6 +40,34 @@
       "env": {
         "NODE_ENV": "development"
       }
+    },
+    {
+      "name": "Main (Attach)",
+      "type": "node",
+      "request": "attach",
+      "protocol": "inspector",
+      "port": 5858,
+      "restart": true,
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "sourceMaps": true,
+      "skipFiles": ["<node_internals>/**"],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "timeout": 30000
+    },
+    {
+      "name": "Dev Server Manager",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/dev-server.js",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "pattern": "Local:.*http://localhost:4200",
+        "uriFormat": "http://localhost:4200",
+        "action": "debugWithChrome"
+      }
     }
   ],
   "compounds": [
@@ -47,6 +76,16 @@
       "configurations": ["Main", "Renderer (Attach)"],
       "stopAll": true,
       "preLaunchTask": "Build.Renderer"
+    },
+    {
+      "name": "Dev: Full Application",
+      "configurations": ["Dev Server Manager", "Main (Attach)", "Renderer (Attach)"],
+      "stopAll": true,
+      "presentation": {
+        "hidden": false,
+        "group": "dev",
+        "order": 1
+      }
     }
   ]
 }

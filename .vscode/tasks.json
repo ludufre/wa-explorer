@@ -44,6 +44,57 @@
           "endsPattern": ".*Local:.*http://localhost:4200.*"
         }
       }
+    },
+    {
+      "label": "Dev: Angular Serve",
+      "type": "shell",
+      "command": "pnpm run ng:serve",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev"
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "."
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*Compiled successfully.*|.*Local:.*http://localhost:4200.*|.*Application bundle generation complete.*"
+        }
+      }
+    },
+    {
+      "label": "Dev: Electron Serve",
+      "type": "shell",
+      "command": "pnpm run electron:serve",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev"
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "."
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": ".*Debugger listening on.*|.*watching extensions.*|.*Found 0 errors. Watching for file changes.*"
+        }
+      }
+    },
+    {
+      "label": "Dev: Start All",
+      "dependsOn": ["Dev: Angular Serve", "Dev: Electron Serve"],
+      "dependsOrder": "parallel",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
     }
   ]
 }

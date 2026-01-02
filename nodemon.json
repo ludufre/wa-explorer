@@ -3,7 +3,7 @@
   "watch": [
     "dist/main/**/*.js"
   ],
-  "exec": "electron . --serve",
+  "exec": "electron --inspect=5858 --remote-debugging-port=9222 . --serve",
   "pollingInterval": 300,
   "legacyWatch": true
 }
