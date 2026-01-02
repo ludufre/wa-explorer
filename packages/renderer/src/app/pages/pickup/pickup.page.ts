@@ -17,6 +17,8 @@ import {
   IonList,
   IonItem,
   IonLabel,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/angular/standalone';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
@@ -38,6 +40,8 @@ import { CommonModule } from '@angular/common';
     IonList,
     IonItem,
     IonLabel,
+    IonSelect,
+    IonSelectOption,
     TranslatePipe,
   ],
 })
@@ -52,6 +56,28 @@ export class PickupPage {
 
   options: IBackup[] = [];
   loaded = false;
+
+  getCurrentLanguage(): string {
+    return this.translate.currentLang || 'en';
+  }
+
+  getAvailableLanguages() {
+    return [
+      { code: 'en', name: 'English', flag: '🇺🇸' },
+      { code: 'pt-br', name: 'Português (Brasil)', flag: '🇧🇷' },
+    ];
+  }
+
+  getLanguageFlag(code: string): string {
+    const lang = this.getAvailableLanguages().find(l => l.code === code);
+    return lang?.flag || '🌐';
+  }
+
+  changeLanguage(lang: string) {
+    console.log('Changing language to:', lang);
+    this.translate.use(lang);
+    localStorage.setItem('user-language', lang);
+  }
 
   ionViewDidEnter() {
     this.loaded = false;

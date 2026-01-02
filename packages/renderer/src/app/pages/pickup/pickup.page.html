@@ -5,6 +5,21 @@
     </ion-buttons>
     <ion-title>{{ 'PAGES.PICKUP.TITLE' | translate }}</ion-title>
     <ion-buttons slot="end">
+      <ion-button>
+        <ion-select
+          [value]="getCurrentLanguage()"
+          (ionChange)="changeLanguage($event.detail.value)"
+          interface="popover"
+          [selectedText]="getLanguageFlag(getCurrentLanguage())"
+          style="font-size: 20px; min-width: 30px"
+        >
+          @for (lang of getAvailableLanguages(); track lang.code) {
+            <ion-select-option [value]="lang.code">
+              {{ lang.flag }} {{ lang.name }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </ion-button>
       <ion-button (click)="ionViewDidEnter()">
         <fa-icon icon="sync"></fa-icon>
       </ion-button>
@@ -16,11 +31,6 @@
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">{{ 'PAGES.PICKUP.TITLE' | translate }}</ion-title>
-      <ion-buttons slot="end">
-        <ion-button (click)="ionViewDidEnter()">
-          <fa-icon icon="sync"></fa-icon>
-        </ion-button>
-      </ion-buttons>
     </ion-toolbar>
   </ion-header>
 

@@ -47,10 +47,40 @@ export class AppComponent implements OnInit {
   appPages = [];
   labels = [];
 
+  getSystemLanguage(): string {
+    if (this.electronService.isElectron) {
+      // Get system language from Electron
+      const locale = navigator.language.toLowerCase();
+      console.log('Navigator locale:', locale);
+
+      if (locale.startsWith('pt')) {
+        return 'pt-br';
+      }
+      return 'en';
+    }
+
+    // Fallback for browser
+    const browserLang = navigator.language.toLowerCase();
+    if (browserLang.startsWith('pt')) {
+      return 'pt-br';
+    }
+    return 'en';
+  }
+
   ngOnInit() {
-    this.translate.addLangs(['pt-BR', 'en']);
+    this.translate.addLangs(['pt-br', 'en']);
     this.translate.setFallbackLang('en');
-    this.translate.use('en');
+
+    // Detect system language
+    const savedLang = localStorage.getItem('user-language');
+    const systemLang = this.getSystemLanguage();
+    const langToUse = savedLang || systemLang;
+
+    console.log('System language:', systemLang);
+    console.log('Saved language:', savedLang);
+    console.log('Using language:', langToUse);
+
+    this.translate.use(langToUse);
 
     console.log('APP_CONFIG', APP_CONFIG);
 
