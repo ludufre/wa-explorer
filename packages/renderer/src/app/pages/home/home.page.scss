@@ -1,8 +1,51 @@
-#container {
-  text-align: center;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--macos-background);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 200px);
+  grid-template-rows: repeat(3, 160px);
+  gap: 24px;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--macos-secondary-background);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--macos-separator);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(.disabled) {
+    background: var(--macos-control-background);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  fa-icon {
+    font-size: 32px;
+    color: var(--macos-accent);
+    margin-bottom: 12px;
+  }
+
+  .feature-title {
+    font-size: var(--font-size-body);
+    font-weight: 600;
+    color: var(--macos-label);
+    text-align: center;
+  }
 }

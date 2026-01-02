@@ -1,0 +1,52 @@
+@if (!hasBackupSelected) {
+  <!-- Mostra PickupPage full-width quando nenhum backup selecionado -->
+  <app-pickup></app-pickup>
+} @else {
+  <!-- Layout 2 colunas quando backup selecionado -->
+  <div class="viewer-layout">
+    <!-- Coluna 1: Chat List (320px) -->
+    <div class="chat-list-column">
+      <div class="chat-list-header">
+        <ion-button
+          fill="clear"
+          size="small"
+          (click)="handleBackToPickup()"
+          class="back-button"
+        >
+          <fa-icon icon="chevron-left"></fa-icon>
+          {{ 'PAGES.VIEWER.BACK_TO_SELECTION' | translate }}
+        </ion-button>
+      </div>
+
+      <ion-content class="list-content">
+        <ion-list class="chat-list">
+          @for (s of data.sessions(); track s.id) {
+            <ion-item
+              button
+              [routerLink]="['detail', s.contact]"
+              routerLinkActive="selected"
+              class="chat-item"
+              lines="none"
+            >
+              <ion-avatar slot="start">
+                <img
+                  [src]="s.picture || 'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' + s.name + '&length=2'"
+                  [alt]="s.name"
+                />
+              </ion-avatar>
+              <ion-label>
+                <h2>{{ s.name }}</h2>
+                <p>{{ s.last | date: 'short' }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-content>
+    </div>
+
+    <!-- Coluna 2: Detail View (flex) -->
+    <div class="detail-column">
+      <ion-router-outlet></ion-router-outlet>
+    </div>
+  </div>
+}

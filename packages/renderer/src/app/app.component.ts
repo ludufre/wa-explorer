@@ -1,17 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { APP_CONFIG } from '../environments/environment';
-import { DataService, ElectronService, IconService } from './engine/services';
+import { ElectronService, IconService } from './engine/services';
 import { DomSanitizer } from '@angular/platform-browser';
-import { RouterLink } from '@angular/router';
 
 import {
   IonApp,
-  IonContent,
-  IonList,
-  IonItem,
-  IonAvatar,
-  IonLabel,
   IonRouterOutlet,
   IonSelect,
   IonSelectOption,
@@ -23,25 +16,12 @@ import { TranslateService } from '@ngx-translate/core';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [
-    IonApp,
-    IonContent,
-    IonList,
-    IonItem,
-    IonAvatar,
-    IonLabel,
-    IonRouterOutlet,
-    IonSelect,
-    IonSelectOption,
-    RouterLink,
-    DatePipe,
-  ],
+  imports: [IonApp, IonRouterOutlet, IonSelect, IonSelectOption],
 })
 export class AppComponent implements OnInit {
   electronService = inject(ElectronService);
   translate = inject(TranslateService);
   icon = inject(IconService);
-  data = inject(DataService);
   damSan = inject(DomSanitizer);
 
   appPages = [];

@@ -1,4 +1,4 @@
-import { Component, inject, NgZone } from '@angular/core';
+import { Component, inject, NgZone, OnInit } from '@angular/core';
 import {
   DataService,
   ElectronService,
@@ -31,7 +31,7 @@ import { CommonModule } from '@angular/common';
     TranslatePipe,
   ],
 })
-export class PickupPage {
+export class PickupPage implements OnInit {
   elec = inject(ElectronService);
   data = inject(DataService);
   g = inject(GlobalService);
@@ -43,7 +43,7 @@ export class PickupPage {
   options: IBackup[] = [];
   loaded = false;
 
-  ionViewDidEnter() {
+  ngOnInit() {
     this.loaded = false;
     this.options = [];
     this.data.sessions.set([]); // Clear sessions when re-entering

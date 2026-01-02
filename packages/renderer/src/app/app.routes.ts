@@ -3,12 +3,20 @@ import { Routes } from '@angular/router';
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    loadComponent: () =>
-      import('./pages/pickup/pickup.page').then(m => m.PickupPage),
+    loadComponent: () => import('./pages/home/home.page').then(m => m.HomePage),
   },
   {
-    path: 'detail/:contact',
+    path: 'viewer',
     loadComponent: () =>
-      import('./pages/detail/detail.component').then(m => m.DetailComponent),
+      import('./pages/viewer/viewer.component').then(m => m.ViewerComponent),
+    children: [
+      {
+        path: 'detail/:contact',
+        loadComponent: () =>
+          import('./pages/detail/detail.component').then(
+            m => m.DetailComponent,
+          ),
+      },
+    ],
   },
 ];

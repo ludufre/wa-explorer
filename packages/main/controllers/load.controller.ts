@@ -9,16 +9,9 @@ import BetterSqlite3 from 'better-sqlite3';
 import { ISession } from '../interfaces/session.interface';
 import { IManifestFile } from '../interfaces/apple-manifest.interface';
 import { IMessage } from '../interfaces/message.interface';
-import { parse } from 'date-fns';
 
 class LoadController {
   async load() {
-    // const dirs: string[] = dialog.showOpenDialogSync(BrowserWindow.fromWebContents (res.sender), {
-    //   properties: ['openDirectory', 'showHiddenFiles']
-    // });
-    // console.log(dirs);
-    // return;
-
     let itunes: IBackup[] = [];
 
     if (process.platform === 'darwin') {
@@ -162,7 +155,10 @@ class LoadController {
       .prepare('SELECT * FROM ZWACHATSESSION WHERE ZCONTACTJID = ?')
       .get(contactJid) as ISession | undefined;
 
-    console.log('📱 Session found:', session ? `Yes (Z_PK: ${session.Z_PK})` : 'No');
+    console.log(
+      '📱 Session found:',
+      session ? `Yes (Z_PK: ${session.Z_PK})` : 'No',
+    );
 
     if (!session) {
       db.close();
@@ -208,7 +204,7 @@ class LoadController {
       return {
         path: backupDir,
         error: 'PAGES.PICKUP.INVALID_BACKUP',
-        errorDetail: `PAGES.PICKUP.FILE_NOT_FOUND: ${url}`,
+        errorDetail: url,
       };
     }
 
@@ -254,21 +250,6 @@ class LoadController {
         ) as IManifestFile;
 
       db.close();
-
-      // const manifest = await db.model('Files', {
-      //   fileID: String,
-      //   domain: String,¨
-      //   relativePath: String,
-      //   flags: Number,
-      //   file: String
-      // });
-
-      // query = await manifest.findOne({
-      //   relativePath: 'ChatStorage.sqlite',
-      //   domain: 'AppDomainGroup-group.net.whatsapp.WhatsApp.shared'
-      // }) as IManifestFile;
-
-      // db.close();
     } catch (err) {
       console.error(err);
 

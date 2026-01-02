@@ -1,0 +1,116 @@
+/* Container quando mostra PickupPage */
+app-pickup {
+  display: block;
+  height: 100vh;
+  overflow: auto;
+}
+
+.viewer-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--macos-background);
+}
+
+/* === Coluna 1: Chat List === */
+.chat-list-column {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--macos-list-background);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--macos-separator);
+  display: flex;
+  flex-direction: column;
+
+  .chat-list-header {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--macos-separator);
+    background: var(--macos-secondary-background);
+    flex-shrink: 0;
+
+    .back-button {
+      --color: var(--macos-secondary-label);
+      font-size: var(--font-size-body);
+      text-transform: none;
+
+      &:hover {
+        --color: var(--macos-label);
+      }
+
+      fa-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+
+  .list-content {
+    --background: transparent;
+    flex: 1;
+  }
+
+  .chat-list {
+    background: transparent;
+    padding: 8px;
+
+    .chat-item {
+      --background: transparent;
+      --background-hover: var(--macos-control-background);
+      --background-activated: var(--macos-control-background);
+      border-radius: var(--border-radius-md);
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+
+      &:hover {
+        --background: var(--macos-control-background);
+      }
+
+      &.selected {
+        --background: var(--macos-selected);
+        --color: var(--macos-accent);
+
+        ion-label h2 {
+          color: var(--macos-accent);
+          font-weight: 600;
+        }
+      }
+
+      ion-avatar {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+      }
+
+      ion-label {
+        h2 {
+          font-size: var(--font-size-body);
+          font-weight: 500;
+          color: var(--macos-label);
+          margin: 0 0 2px 0;
+        }
+
+        p {
+          font-size: var(--font-size-small);
+          color: var(--macos-secondary-label);
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+/* === Coluna 2: Detail View === */
+.detail-column {
+  flex: 1;
+  background: var(--macos-background);
+  overflow: hidden;
+  position: relative;
+
+  ion-router-outlet {
+    height: 100%;
+  }
+}

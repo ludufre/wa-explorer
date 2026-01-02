@@ -1,11 +1,10 @@
 <ion-app>
   <div class="macos-window">
-    <!-- Titlebar com região draggable -->
+    <!-- Titlebar -->
     <div class="macos-titlebar">
       <div class="traffic-lights-spacer"></div>
       <div class="titlebar-center">WhatsApp Explorer</div>
       <div class="titlebar-controls">
-        <!-- Language selector aqui -->
         <ion-select
           [value]="currentLanguage"
           (ionChange)="changeLanguage($event.detail.value)"
@@ -21,56 +20,9 @@
       </div>
     </div>
 
-    <!-- Three-column layout -->
+    <!-- Main content - apenas router outlet -->
     <div class="macos-content">
-      <!-- Column 1: Sidebar -->
-      <div class="macos-sidebar">
-        <ion-content class="sidebar-content">
-          <div class="sidebar-section">
-            <div class="section-title">Backups</div>
-            <!-- Placeholder, pode adicionar filtros no futuro -->
-          </div>
-        </ion-content>
-      </div>
-
-      <!-- Column 2: Chat List -->
-      <div class="macos-list-view">
-        <ion-content class="list-content">
-          @if (data.sessions() && data.sessions().length > 0) {
-            <ion-list class="chat-list">
-              @for (s of data.sessions(); track s.id) {
-                <ion-item
-                  button
-                  [routerLink]="['/detail', s.contact]"
-                  routerLinkActive="selected"
-                  class="chat-item"
-                  lines="none"
-                >
-                  <ion-avatar slot="start">
-                    <img
-                      [src]="s.picture || 'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' + s.name + '&length=2'"
-                      [alt]="s.name"
-                    />
-                  </ion-avatar>
-                  <ion-label>
-                    <h2>{{ s.name }}</h2>
-                    <p>{{ s.last | date: 'short' }}</p>
-                  </ion-label>
-                </ion-item>
-              }
-            </ion-list>
-          } @else {
-            <div class="empty-state">
-              <p>Selecione um backup para ver conversas</p>
-            </div>
-          }
-        </ion-content>
-      </div>
-
-      <!-- Column 3: Detail View -->
-      <div class="macos-detail-view">
-        <ion-router-outlet></ion-router-outlet>
-      </div>
+      <ion-router-outlet></ion-router-outlet>
     </div>
   </div>
 </ion-app>

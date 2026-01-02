@@ -1,21 +1,16 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>{{ 'PAGES.HOME.TITLE' | translate }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{ 'PAGES.HOME.TITLE' | translate }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container" class="ion-padding">
-    @if (!loaded) {
-      <h2 color="primary">
-        {{ 'PAGES.HOME.MESSAGE' | translate }}
-      </h2>
+<div class="home-container">
+  <div class="features-grid">
+    @for (feature of features; track feature.id) {
+      <div
+        class="feature-card"
+        [class.disabled]="!feature.enabled"
+        (click)="handleFeatureClick(feature)"
+      >
+        <fa-icon [icon]="feature.icon" size="2x"></fa-icon>
+        <div class="feature-title">
+          {{ feature.titleKey | translate }}
+        </div>
+      </div>
     }
   </div>
-</ion-content>
+</div>

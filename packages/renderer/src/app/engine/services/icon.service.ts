@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
   faSync,
+  faComments,
+  faFileExport,
+  faFileImport,
+  faCodeMerge,
+  faRobot,
+  faMobileAlt,
+  faChevronLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { FaIconLibrary, FaConfig } from '@fortawesome/angular-fontawesome';
 
@@ -16,6 +23,13 @@ export class IconService {
     this.fac.fallbackIcon = faSync;
     this.fa.addIcons(
       faSync,
+      faComments,
+      faFileExport,
+      faFileImport,
+      faCodeMerge,
+      faRobot,
+      faMobileAlt,
+      faChevronLeft,
     );
   }
 }

@@ -6,8 +6,13 @@ import IBackup from '../../../../../main/interfaces/backup.interface';
 })
 export class DataService {
   backups: IBackup[] = [];
-  selectedBackup: IBackup;
+  selectedBackup: IBackup | null = null;
   sessions = signal<ISession[]>([]);
+
+  resetViewerState() {
+    this.sessions.set([]);
+    this.selectedBackup = null;
+  }
 }
 
 export interface ISession {

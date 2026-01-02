@@ -23,8 +23,19 @@
       "INVALID_MISSING": "Sem dados do WhatsApp"
     },
     "HOME": {
-      "TITLE": "Escolha uma conversa",
-      "MESSAGE": "No menu lateral você poderá escolher a conversa que deseja visualizar"
+      "TITLE": "WhatsApp Explorer",
+      "MESSAGE": "No menu lateral você poderá escolher a conversa que deseja visualizar",
+      "FEATURES": {
+        "READ_BACKUP": "Ler Conversas do Backup",
+        "EXPORT": "Exportar Conversas",
+        "IMPORT": "Importar Conversa",
+        "MERGE": "Juntar Conversas",
+        "CONVERT_ANDROID": "Converter para Android",
+        "CONVERT_IOS": "Converter para iOS"
+      }
+    },
+    "VIEWER": {
+      "BACK_TO_SELECTION": "Voltar"
     },
     "DETAIL": {
       "TITLE": "Conversa",
