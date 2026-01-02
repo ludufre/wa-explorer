@@ -1,0 +1,39 @@
+<ion-app>
+  <ion-split-pane contentId="main-content">
+    <ion-menu
+      contentId="main-content"
+      type="overlay"
+      [disabled]="!!!data.sessions || data.sessions.length === 0"
+    >
+      <ion-content>
+        <ion-list id="inbox-list">
+          @for (s of data.sessions; track s.id) {
+            <ion-menu-toggle auto-hide="false">
+              <ion-item
+                routerDirection="root"
+                [routerLink]="[s.contact]"
+                lines="none"
+                detail="false"
+                routerLinkActive="selected"
+              >
+                <ion-avatar>
+                  <img
+                    [src]="
+                      s.picture ||
+                      'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' +
+                        s.name +
+                        '&length=2'
+                    "
+                    title="Iamge"
+                  />
+                </ion-avatar>
+                <ion-label>{{ s.name }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          }
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

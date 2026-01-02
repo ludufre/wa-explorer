@@ -4,7 +4,7 @@
     {
       "label": "Build.Main",
       "type": "shell",
-      "command": "npm run electron:serve-tsc:dev",
+      "command": "pnpm run electron:serve-tsc",
       "isBackground": false,
       "group": {
         "kind": "build",
@@ -26,7 +26,7 @@
     {
       "label": "Build.Renderer",
       "type": "shell",
-      "command": "npm run ng:serve",
+      "command": "pnpm run ng:serve",
       "isBackground": true,
       "group": {
         "kind": "build",
@@ -40,8 +40,8 @@
         "pattern": "$tsc",
         "background": {
           "activeOnStart": true,
-          "beginsPattern": "^.*",
-          "endsPattern": "^.*Compiled successfully.*"
+          "beginsPattern": ".*Application bundle generation.*",
+          "endsPattern": ".*Local:.*http://localhost:4200.*"
         }
       }
     }

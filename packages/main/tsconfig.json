@@ -1,0 +1,25 @@
+{
+  "include": ["**/*.ts", "**/keys.json"],
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "outDir": "../../dist/main",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "inlineSources": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "composite": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "exclude": [
+    "../../node_modules",
+    "node_modules",
+    "**/node_modules",
+    "packages/*/node_modules"
+  ]
+}

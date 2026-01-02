@@ -1,0 +1,79 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'PAGES.PICKUP.TITLE' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="ionViewDidEnter()">
+        <fa-icon icon="sync"></fa-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'PAGES.PICKUP.TITLE' | translate }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="ionViewDidEnter()">
+          <fa-icon icon="sync"></fa-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container" class="ion-padding">
+    @if (loaded) {
+      <ion-button (click)="dialog()">Pick folder</ion-button>
+      @if (options.length > 0) {
+        <ion-list class="round" lines="full">
+          <ion-header>iTunes Backup</ion-header>
+          @for (opt of options; track opt) {
+            <ion-item button (click)="select(opt)" [detail]="!!!opt.error">
+              <ion-label>
+                @if (!!!opt.error) {
+                  <h1>
+                    {{ opt.name }}
+                    @if (!!!opt?.chatStorage) {
+                      <span>
+                        ({{ 'PAGES.PICKUP.INVALID_MISSING' | translate }})
+                      </span>
+                    }
+                  </h1>
+                } @else {
+                  <h1>
+                    <span style="color: red">
+                      {{ 'PAGES.PICKUP.FAIL' | translate }}
+                    </span>
+                  </h1>
+                }
+                @if (!!!opt.error) {
+                  <h2>
+                    {{ opt.device }} / {{ opt.version }} / {{ opt.serial }}
+                  </h2>
+                  <h3>{{ opt.date }} ({{ opt.date }})</h3>
+                }
+                <p>{{ opt.path }}</p>
+                @if (!!opt.error) {
+                  <p>{{ opt.error | translate }}</p>
+                }
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+
+      @if (options.length === 0) {
+        <h2 color="primary">{{ 'PAGES.PICKUP.EMPTY' | translate }}ddd</h2>
+      }
+    }
+
+    @if (!loaded) {
+      <h2 color="primary">
+        {{ 'PAGES.PICKUP.LOADING' | translate }}
+      </h2>
+    }
+  </div>
+</ion-content>

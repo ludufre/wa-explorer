@@ -1,0 +1,21 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>{{ 'PAGES.HOME.TITLE' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'PAGES.HOME.TITLE' | translate }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div id="container" class="ion-padding">
+    @if (!loaded) {
+      <h2 color="primary">
+        {{ 'PAGES.HOME.MESSAGE' | translate }}
+      </h2>
+    }
+  </div>
+</ion-content>

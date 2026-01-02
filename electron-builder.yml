@@ -1,0 +1,29 @@
+productName: WA Explorer
+appId: com.ludufre.wa-explorer
+copyright: Copyright 2026 Luan Freitas
+# afterSign: notarize.js
+directories:
+  buildResources: resources
+  output: packed
+files:
+  - dist/**/*
+  - localization/!(locales)
+  - resources/**/*
+  - .env
+extraFiles:
+  - localization/locales/**/*
+extraResources:
+  - THIRD-PARTY-LICENSES.txt
+  - from: patches
+    to: app.asar.unpacked/build
+    filter: '*.node'
+linux:
+  category: Utility
+  target:
+    - target: deb
+      arch:
+        - arm64
+  asarUnpack:
+    - dist/main/applets
+    - build
+    - patches

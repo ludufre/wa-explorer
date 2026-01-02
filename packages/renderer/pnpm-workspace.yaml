@@ -1,0 +1,8 @@
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - electron
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - nice-napi
+  - nx

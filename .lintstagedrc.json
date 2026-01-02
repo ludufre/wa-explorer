@@ -1,0 +1,3 @@
+{
+  "*.{ts,scss,html}": ["prettier --write --config .prettierrc.js"]
+}

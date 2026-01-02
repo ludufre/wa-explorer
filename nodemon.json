@@ -1,0 +1,9 @@
+{
+  "verbose": true,
+  "watch": [
+    "dist/main/**/*.js"
+  ],
+  "exec": "electron . --serve",
+  "pollingInterval": 300,
+  "legacyWatch": true
+}

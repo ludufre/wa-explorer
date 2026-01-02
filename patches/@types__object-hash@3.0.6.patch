@@ -1,0 +1,12 @@
+diff --git a/index.d.ts b/index.d.ts
+index db64f8780757e60e142b0b22ea5513b68a163922..872482efbff26982bff8a8180c019f4aed3f305c 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -138,6 +138,6 @@ declare namespace objectHash {
+  * @see https://github.com/puleos/object-hash#hashvalue-options
+  */
+ declare function objectHash(object: objectHash.NotUndefined, options?: objectHash.NormalOption): string;
+-declare function objectHash(object: objectHash.NotUndefined, options?: objectHash.WithBufferOption): Buffer;
++declare function objectHash(object: objectHash.NotUndefined, options?: objectHash.WithBufferOption): any;
+ 
+ export = objectHash;
