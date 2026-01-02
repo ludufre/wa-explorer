@@ -3,9 +3,15 @@ import Swal, { SweetAlertPosition } from 'sweetalert2';
 
 @Injectable({ providedIn: 'root' })
 export class GlobalService {
-  constructor() { }
+  constructor() {}
 
-  toast(text: string, title: string = null, icon: 'warning' | 'error' | 'success' | 'info' | 'question' = 'info', position: SweetAlertPosition = 'bottom-end', timer = 1500) {
+  toast(
+    text: string,
+    title: string = null,
+    icon: 'warning' | 'error' | 'success' | 'info' | 'question' = 'info',
+    position: SweetAlertPosition = 'bottom-end',
+    timer = 1500,
+  ) {
     Swal.fire({
       title: title || text,
       text: !!title ? text : null,
@@ -14,12 +20,18 @@ export class GlobalService {
       toast: true,
       timerProgressBar: true,
       position,
-      showConfirmButton: false
+      showConfirmButton: false,
     });
   }
 
   // async showAlert(msg: string, title: string, btns: AlertButton[] = null, inputs: AlertInput[] = null, dismiss: any = null) {
-  alert(text: string, title: string = null, icon: 'warning' | 'error' | 'success' | 'info' | 'question' = 'info', position: SweetAlertPosition = 'center', timer = 0): Promise<any> {
+  alert(
+    text: string,
+    title: string = null,
+    icon: 'warning' | 'error' | 'success' | 'info' | 'question' = 'info',
+    position: SweetAlertPosition = 'center',
+    timer = 0,
+  ): Promise<any> {
     return Swal.fire({
       title: title || text,
       text: !!title ? text : null,
@@ -29,11 +41,17 @@ export class GlobalService {
       timerProgressBar: true,
       position,
       showConfirmButton: true,
-      heightAuto: false
+      heightAuto: false,
     });
   }
 
-  ask(text: string, title: string = null, labels: [string, string], icon: 'warning' | 'error' | 'success' | 'info' | 'question' = 'question', position: SweetAlertPosition = 'center'): Promise<void> {
+  ask(
+    text: string,
+    title: string = null,
+    labels: [string, string],
+    icon: 'warning' | 'error' | 'success' | 'info' | 'question' = 'question',
+    position: SweetAlertPosition = 'center',
+  ): Promise<void> {
     return new Promise(async (ok, nook) => {
       const clicked = await Swal.fire({
         title: title || text,
@@ -63,9 +81,32 @@ export class GlobalService {
     }
     try {
       JSON.parse(str);
-    } catch (e) {
+    } catch (_) {
       return false;
     }
     return true;
+  }
+
+  private loadingInstance: any = null;
+
+  showLoading(text: string = 'Loading...', title: string = null): void {
+    this.loadingInstance = Swal.fire({
+      title: title || text,
+      text: !!title ? text : null,
+      allowOutsideClick: false,
+      heightAuto: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  }
+
+  hideLoading(): void {
+    if (this.loadingInstance) {
+      Swal.close();
+      this.loadingInstance = null;
+    }
   }
 }

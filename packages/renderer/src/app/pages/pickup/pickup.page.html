@@ -26,10 +26,14 @@
 
   <div id="container" class="ion-padding">
     @if (loaded) {
-      <ion-button (click)="dialog()">Pick folder</ion-button>
+      <ion-button (click)="dialog()">
+        {{ 'PAGES.PICKUP.PICK_FOLDER' | translate }}
+      </ion-button>
       @if (options.length > 0) {
         <ion-list class="round" lines="full">
-          <ion-header>iTunes Backup</ion-header>
+          <ion-header>
+            {{ 'PAGES.PICKUP.ITUNES_BACKUP' | translate }}
+          </ion-header>
           @for (opt of options; track opt) {
             <ion-item button (click)="select(opt)" [detail]="!!!opt.error">
               <ion-label>
@@ -66,7 +70,7 @@
       }
 
       @if (options.length === 0) {
-        <h2 color="primary">{{ 'PAGES.PICKUP.EMPTY' | translate }}ddd</h2>
+        <h2 color="primary">{{ 'PAGES.PICKUP.EMPTY' | translate }}</h2>
       }
     }
 

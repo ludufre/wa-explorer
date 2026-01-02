@@ -66,39 +66,68 @@ export class PickupPage {
           }));
           this.loaded = true;
         } else {
-          this.g.alert(ret?.msg || 'Failed! Try again.', 'Oh!', 'error');
+          this.g.alert(
+            ret?.msg || this.translate.instant('PAGES.PICKUP.FAILED_TRY_AGAIN'),
+            this.translate.instant('PAGES.PICKUP.OH'),
+            'error',
+          );
         }
       },
       err => {
-        this.g.alert(err?.msg || 'Failed! Try again.', 'Oh!', 'error');
+        this.g.alert(
+          err?.msg || this.translate.instant('PAGES.PICKUP.FAILED_TRY_AGAIN'),
+          this.translate.instant('PAGES.PICKUP.OH'),
+          'error',
+        );
       },
     );
   }
 
   select(opt: IBackup) {
     if (!!opt.error) {
-      this.g.alert(
-        !!opt?.errorDetail ? opt.errorDetail : 'No more details',
-        this.translate.instant(opt.error),
-        'error',
-      );
+      const errorDetail = opt?.errorDetail
+        ? opt.errorDetail.startsWith('PAGES.')
+          ? this.translate.instant(opt.errorDetail)
+          : opt.errorDetail
+        : this.translate.instant('PAGES.PICKUP.NO_MORE_DETAILS');
+
+      this.g.alert(errorDetail, this.translate.instant(opt.error), 'error');
       return;
     }
     if (!!!opt.chatStorage) {
       this.g.alert(
         this.translate.instant('PAGES.PICKUP.INVALID_MISSING'),
-        'Oh!',
+        this.translate.instant('PAGES.PICKUP.OH'),
         'info',
       );
       return;
     }
 
-    window.ipc.toMainChoose(opt.chatStorage, opt.path).then(choose => {
-      this.zone.run(() => {
-        this.data.sessions = choose.data;
-        this.loaded = true;
-      });
-    });
+    this.g.showLoading(
+      this.translate.instant('PAGES.PICKUP.LOADING_CHATS'),
+      this.translate.instant('PAGES.PICKUP.PLEASE_WAIT'),
+    );
+
+    window.ipc.toMainChoose(opt.chatStorage, opt.path).then(
+      choose => {
+        this.zone.run(() => {
+          this.g.hideLoading();
+          this.data.sessions = choose.data;
+          this.loaded = true;
+        });
+      },
+      error => {
+        this.zone.run(() => {
+          this.g.hideLoading();
+          this.g.alert(
+            error?.message ||
+              this.translate.instant('PAGES.PICKUP.FAILED_TO_LOAD_CHATS'),
+            this.translate.instant('PAGES.PICKUP.ERROR'),
+            'error',
+          );
+        });
+      },
+    );
   }
 
   dialog() {
@@ -107,16 +136,40 @@ export class PickupPage {
       .then((ret: { ok: number; msg?: string; db?: string; path?: string }) => {
         if (ret.ok === 0) {
           if (!!ret?.msg) {
-            this.g.alert(ret.msg, 'Oh!', 'error');
+            this.g.alert(
+              ret.msg,
+              this.translate.instant('PAGES.PICKUP.OH'),
+              'error',
+            );
           }
           return;
         }
-        window.ipc.toMainChoose(ret.db!, ret.path!).then(choose => {
-          this.zone.run(() => {
-            this.data.sessions = choose.data;
-            this.loaded = true;
-          });
-        });
+
+        this.g.showLoading(
+          this.translate.instant('PAGES.PICKUP.LOADING_CHATS'),
+          this.translate.instant('PAGES.PICKUP.PLEASE_WAIT'),
+        );
+
+        window.ipc.toMainChoose(ret.db!, ret.path!).then(
+          choose => {
+            this.zone.run(() => {
+              this.g.hideLoading();
+              this.data.sessions = choose.data;
+              this.loaded = true;
+            });
+          },
+          error => {
+            this.zone.run(() => {
+              this.g.hideLoading();
+              this.g.alert(
+                error?.message ||
+                  this.translate.instant('PAGES.PICKUP.FAILED_TO_LOAD_CHATS'),
+                this.translate.instant('PAGES.PICKUP.ERROR'),
+                'error',
+              );
+            });
+          },
+        );
       });
   }
 }

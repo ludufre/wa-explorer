@@ -51,7 +51,7 @@ class LoadController {
     ) {
       console.log(dbFile);
       console.log(path.join(base, 'Manifest.db'));
-      return { ok: 0, msg: 'Not found' };
+      return { ok: 0, msg: 'PAGES.PICKUP.NOT_FOUND' };
     }
 
     const db = BetterSqlite3(path.join(base, dbFile), {
@@ -149,7 +149,7 @@ class LoadController {
       return {
         path: backupDir,
         error: 'PAGES.PICKUP.INVALID_BACKUP',
-        errorDetail: `Not found: ${url}`,
+        errorDetail: `PAGES.PICKUP.FILE_NOT_FOUND: ${url}`,
       };
     }
 
@@ -177,7 +177,7 @@ class LoadController {
       return {
         path: backupDir,
         error: 'PAGES.PICKUP.INVALID_INFO',
-        errorDetail: `Can't parse Info.plist`,
+        errorDetail: 'PAGES.PICKUP.CANT_PARSE_INFO',
       };
     }
 
