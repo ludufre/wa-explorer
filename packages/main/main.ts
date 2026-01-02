@@ -31,16 +31,20 @@ async function createWindow(): Promise<BrowserWindow> {
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: 1920,
-    height: 1080,
+    width: 1280,
+    height: 800,
+    minWidth: 1024,
+    minHeight: 600,
     useContentSize: true,
 
-    kiosk: !serve,
-    fullscreen: !serve,
-    show: false,
-    alwaysOnTop: !serve,
+    // macOS native window configuration
+    titleBarStyle: 'hiddenInset',
+    trafficLightPosition: { x: 12, y: 16 },
+    transparent: true,
+    vibrancy: 'sidebar',
 
-    backgroundColor: '#151419',
+    show: false,
+    backgroundColor: '#00000000',
     fullscreenable: true,
     webPreferences: {
       nodeIntegration: true,
@@ -70,8 +74,6 @@ async function createWindow(): Promise<BrowserWindow> {
 
   if (serve) {
     win?.webContents.openDevTools();
-  } else {
-    await win?.webContents.insertCSS('* { cursor: none !important; }');
   }
 
   win!.webContents.on('did-finish-load', () => {

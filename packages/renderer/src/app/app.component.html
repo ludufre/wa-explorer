@@ -1,39 +1,76 @@
 <ion-app>
-  <ion-split-pane contentId="main-content">
-    <ion-menu
-      contentId="main-content"
-      type="overlay"
-      [disabled]="!!!data.sessions || data.sessions.length === 0"
-    >
-      <ion-content>
-        <ion-list id="inbox-list">
-          @for (s of data.sessions; track s.id) {
-            <ion-menu-toggle auto-hide="false">
-              <ion-item
-                routerDirection="root"
-                [routerLink]="['/detail', s.contact]"
-                lines="none"
-                detail="false"
-                routerLinkActive="selected"
-              >
-                <ion-avatar>
-                  <img
-                    [src]="
-                      s.picture ||
-                      'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' +
-                        s.name +
-                        '&length=2'
-                    "
-                    [alt]="s.name"
-                  />
-                </ion-avatar>
-                <ion-label>{{ s.name }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
+  <div class="macos-window">
+    <!-- Titlebar com região draggable -->
+    <div class="macos-titlebar">
+      <div class="traffic-lights-spacer"></div>
+      <div class="titlebar-center">WhatsApp Explorer</div>
+      <div class="titlebar-controls">
+        <!-- Language selector aqui -->
+        <ion-select
+          [value]="currentLanguage"
+          (ionChange)="changeLanguage($event.detail.value)"
+          interface="popover"
+          class="language-select"
+        >
+          @for (lang of availableLanguages; track lang.code) {
+            <ion-select-option [value]="lang.code">
+              {{ lang.flag }} {{ lang.name }}
+            </ion-select-option>
           }
-        </ion-list>
-      </ion-content>
-    </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
-  </ion-split-pane>
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Three-column layout -->
+    <div class="macos-content">
+      <!-- Column 1: Sidebar -->
+      <div class="macos-sidebar">
+        <ion-content class="sidebar-content">
+          <div class="sidebar-section">
+            <div class="section-title">Backups</div>
+            <!-- Placeholder, pode adicionar filtros no futuro -->
+          </div>
+        </ion-content>
+      </div>
+
+      <!-- Column 2: Chat List -->
+      <div class="macos-list-view">
+        <ion-content class="list-content">
+          @if (data.sessions() && data.sessions().length > 0) {
+            <ion-list class="chat-list">
+              @for (s of data.sessions(); track s.id) {
+                <ion-item
+                  button
+                  [routerLink]="['/detail', s.contact]"
+                  routerLinkActive="selected"
+                  class="chat-item"
+                  lines="none"
+                >
+                  <ion-avatar slot="start">
+                    <img
+                      [src]="s.picture || 'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' + s.name + '&length=2'"
+                      [alt]="s.name"
+                    />
+                  </ion-avatar>
+                  <ion-label>
+                    <h2>{{ s.name }}</h2>
+                    <p>{{ s.last | date: 'short' }}</p>
+                  </ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          } @else {
+            <div class="empty-state">
+              <p>Selecione um backup para ver conversas</p>
+            </div>
+          }
+        </ion-content>
+      </div>
+
+      <!-- Column 3: Detail View -->
+      <div class="macos-detail-view">
+        <ion-router-outlet></ion-router-outlet>
+      </div>
+    </div>
+  </div>
 </ion-app>

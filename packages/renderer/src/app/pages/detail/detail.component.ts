@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DataService, IMessage } from '../../engine/services/data.service';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonSpinner } from '@ionic/angular/standalone';
+import { IonContent, IonSpinner } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-detail',
@@ -14,11 +14,6 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton,
     TranslatePipe,
     RouterLink,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonBackButton,
     IonSpinner,
   ],
 })

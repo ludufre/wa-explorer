@@ -1,14 +1,9 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/pickup"></ion-back-button>
-    </ion-buttons>
-    <ion-title>{{ contactName || contactJid }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
+<ion-content class="detail-content">
   <div class="messages-container">
+    <div class="detail-header">
+      <h1 class="contact-name">{{ contactName || contactJid }}</h1>
+    </div>
+
     @if (loading) {
       <div class="loading-container">
         <ion-spinner></ion-spinner>

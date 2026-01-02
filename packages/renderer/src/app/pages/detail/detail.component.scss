@@ -1,11 +1,35 @@
-ion-content {
-  --background: #e5ddd5;
+.detail-content {
+  --background: var(--macos-background);
+}
+
+.detail-header {
+  -webkit-app-region: drag;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background: var(--macos-secondary-background);
+  border-bottom: 1px solid var(--macos-separator);
+  flex-shrink: 0;
+
+  .contact-name {
+    font-size: var(--font-size-title);
+    font-weight: 600;
+    color: var(--macos-label);
+    margin: 0;
+  }
 }
 
 .messages-container {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.messages-list {
+  flex: 1;
+  overflow-y: auto;
+  background: #e5ddd5;
 }
 
 .loading-container,

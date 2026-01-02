@@ -1,4 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { APP_CONFIG } from '../environments/environment';
 import { DataService, ElectronService, IconService } from './engine/services';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -6,15 +7,14 @@ import { RouterLink } from '@angular/router';
 
 import {
   IonApp,
-  IonSplitPane,
-  IonMenu,
   IonContent,
   IonList,
-  IonMenuToggle,
   IonItem,
   IonAvatar,
   IonLabel,
   IonRouterOutlet,
+  IonSelect,
+  IonSelectOption,
 } from '@ionic/angular/standalone';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -25,16 +25,16 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.scss'],
   imports: [
     IonApp,
-    IonSplitPane,
-    IonMenu,
     IonContent,
     IonList,
-    IonMenuToggle,
     IonItem,
     IonAvatar,
     IonLabel,
     IonRouterOutlet,
+    IonSelect,
+    IonSelectOption,
     RouterLink,
+    DatePipe,
   ],
 })
 export class AppComponent implements OnInit {
@@ -46,6 +46,21 @@ export class AppComponent implements OnInit {
 
   appPages = [];
   labels = [];
+
+  availableLanguages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'pt-br', name: 'Português (Brasil)', flag: '🇧🇷' },
+  ];
+
+  get currentLanguage() {
+    return this.translate.currentLang || 'en';
+  }
+
+  changeLanguage(lang: string) {
+    console.log('Changing language to:', lang);
+    this.translate.use(lang);
+    localStorage.setItem('user-language', lang);
+  }
 
   getSystemLanguage(): string {
     if (this.electronService.isElectron) {

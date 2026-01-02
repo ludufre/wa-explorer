@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import IBackup from '../../../../../main/interfaces/backup.interface';
 
 @Injectable({
@@ -7,7 +7,7 @@ import IBackup from '../../../../../main/interfaces/backup.interface';
 export class DataService {
   backups: IBackup[] = [];
   selectedBackup: IBackup;
-  sessions: ISession[] = [];
+  sessions = signal<ISession[]>([]);
 }
 
 export interface ISession {

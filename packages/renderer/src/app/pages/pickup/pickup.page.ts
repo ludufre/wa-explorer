@@ -7,18 +7,11 @@ import {
 import IBackup from '../../../../../main/interfaces/backup.interface';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
-  IonHeader,
-  IonToolbar,
-  IonButtons,
-  IonMenuButton,
-  IonTitle,
   IonButton,
   IonContent,
   IonList,
   IonItem,
   IonLabel,
-  IonSelect,
-  IonSelectOption,
 } from '@ionic/angular/standalone';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
@@ -29,19 +22,12 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./pickup.page.scss'],
   imports: [
     CommonModule,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
-    IonMenuButton,
-    IonTitle,
     IonButton,
     FaIconComponent,
     IonContent,
     IonList,
     IonItem,
     IonLabel,
-    IonSelect,
-    IonSelectOption,
     TranslatePipe,
   ],
 })
@@ -57,31 +43,10 @@ export class PickupPage {
   options: IBackup[] = [];
   loaded = false;
 
-  getCurrentLanguage(): string {
-    return this.translate.currentLang || 'en';
-  }
-
-  getAvailableLanguages() {
-    return [
-      { code: 'en', name: 'English', flag: '🇺🇸' },
-      { code: 'pt-br', name: 'Português (Brasil)', flag: '🇧🇷' },
-    ];
-  }
-
-  getLanguageFlag(code: string): string {
-    const lang = this.getAvailableLanguages().find(l => l.code === code);
-    return lang?.flag || '🌐';
-  }
-
-  changeLanguage(lang: string) {
-    console.log('Changing language to:', lang);
-    this.translate.use(lang);
-    localStorage.setItem('user-language', lang);
-  }
-
   ionViewDidEnter() {
     this.loaded = false;
     this.options = [];
+    this.data.sessions.set([]); // Clear sessions when re-entering
     window.ipc.toMainLoad().then(
       (ret: { ok: boolean; msg: string; itunes: IBackup[] }) => {
         console.log(ret.itunes);
@@ -139,7 +104,7 @@ export class PickupPage {
         this.zone.run(() => {
           this.g.hideLoading();
           this.data.selectedBackup = opt;
-          this.data.sessions = choose.data;
+          this.data.sessions.set(choose.data);
           this.loaded = true;
         });
       },
@@ -185,7 +150,7 @@ export class PickupPage {
                 path: ret.path!,
                 chatStorage: ret.db!,
               } as IBackup;
-              this.data.sessions = choose.data;
+              this.data.sessions.set(choose.data);
               this.loaded = true;
             });
           },

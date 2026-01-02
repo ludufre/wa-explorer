@@ -9,3 +9,93 @@
 @import '@ionic/angular/css/text-alignment.css';
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
+
+/* === macOS Scrollbars === */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.5);
+    background-clip: content-box;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  * {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    background-clip: content-box;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.5);
+      background-clip: content-box;
+    }
+  }
+}
+
+/* === Ionic Component Overrides === */
+ion-item {
+  --min-height: 44px;
+  font-size: var(--font-size-body);
+}
+
+ion-button {
+  --border-radius: var(--border-radius-md);
+  font-size: var(--font-size-body);
+  text-transform: none;
+}
+
+ion-toolbar {
+  --min-height: 52px;
+  --background: var(--macos-secondary-background);
+  --border-color: var(--macos-separator);
+}
+
+ion-select {
+  font-size: var(--font-size-body);
+
+  &::part(icon) {
+    opacity: 0.5;
+  }
+}
+
+/* === Remove focus outlines padrão Ionic === */
+ion-item.ion-focused {
+  --highlight-background: transparent;
+}
+
+/* === Typography === */
+html {
+  font-family: var(--font-family-base);
+}
+
+body {
+  font-size: var(--font-size-body);
+  color: var(--macos-label);
+  background: var(--macos-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-base);
+  color: var(--macos-label);
+}

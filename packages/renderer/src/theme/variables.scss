@@ -1,96 +1,83 @@
 :root {
-  --ion-color-primary: #004990;
-  --ion-color-primary-rgb: 0, 73, 144;
+  color-scheme: light dark;
+
+  /* === Tipografia macOS === */
+  --font-family-base: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  --font-size-title: 13px;
+  --font-size-body: 13px;
+  --font-size-small: 11px;
+  --font-size-caption: 10px;
+
+  /* === Espaçamento (8px grid) === */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+
+  /* === Borders & Radius === */
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+
+  /* === Shadows === */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* === Cores macOS Light Mode === */
+  --macos-label: rgba(0, 0, 0, 0.85);
+  --macos-secondary-label: rgba(0, 0, 0, 0.5);
+  --macos-tertiary-label: rgba(0, 0, 0, 0.25);
+  --macos-separator: rgba(0, 0, 0, 0.1);
+  --macos-background: #ffffff;
+  --macos-secondary-background: #f5f5f5;
+  --macos-tertiary-background: #ebebeb;
+  --macos-sidebar-background: rgba(246, 246, 246, 0.8);
+  --macos-list-background: rgba(255, 255, 255, 0.9);
+  --macos-selected: rgba(0, 122, 255, 0.15);
+  --macos-selected-unfocused: rgba(0, 0, 0, 0.08);
+  --macos-accent: #007AFF;
+  --macos-control-background: rgba(0, 0, 0, 0.05);
+
+  /* === Mapear para variáveis Ionic (manter compatibilidade) === */
+  --ion-color-primary: var(--macos-accent);
+  --ion-color-primary-rgb: 0, 122, 255;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #00407f;
-  --ion-color-primary-tint: #1a5b9b;
 
-  --ion-color-secondary: #0072c6;
-  --ion-color-secondary-rgb: 0, 114, 198;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #0064ae;
-  --ion-color-secondary-tint: #1a80cc;
+  --ion-background-color: var(--macos-background);
+  --ion-text-color: var(--macos-label);
+  --ion-text-color-rgb: 0, 0, 0;
 
-  --ion-color-tertiary: #82b9e6;
-  --ion-color-tertiary-rgb: 130, 185, 230;
-  --ion-color-tertiary-contrast: #000000;
-  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
-  --ion-color-tertiary-shade: #72a3ca;
-  --ion-color-tertiary-tint: #8fc0e9;
+  --ion-toolbar-background: var(--macos-secondary-background);
+  --ion-item-background: transparent;
+  --ion-border-color: var(--macos-separator);
 
-  --ion-color-success: #5cb85c;
-  --ion-color-success-rgb: 92, 184, 92;
-  --ion-color-success-contrast: #ffffff;
-  --ion-color-success-contrast-rgb: 0, 0, 0;
-  --ion-color-success-shade: #51a251;
-  --ion-color-success-tint: #6cbf6c;
-
-  --ion-color-warning: #fcf8e3;
-  --ion-color-warning-rgb: 252, 248, 227;
-  --ion-color-warning-contrast: #8a6d3b;
-  --ion-color-warning-contrast-rgb: 138, 109, 59;
-  --ion-color-warning-shade: #dedac8;
-  --ion-color-warning-tint: #fcf9e6;
-
-  --ion-color-danger: #f04141;
-  --ion-color-danger-rgb: 245, 61, 61;
-  --ion-color-danger-contrast: #ffffff;
-  --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #d33939;
-  --ion-color-danger-tint: #f25454;
-
-  --ion-color-dark: #222428;
-  --ion-color-dark-rgb: 34, 34, 34;
-  --ion-color-dark-contrast: #ffffff;
-  --ion-color-dark-contrast-rgb: 255, 255, 255;
-  --ion-color-dark-shade: #1e2023;
-  --ion-color-dark-tint: #383a3e;
-
-  --ion-color-medium: #989aa2;
-  --ion-color-medium-rgb: 152, 154, 162;
-  --ion-color-medium-contrast: #ffffff;
-  --ion-color-medium-contrast-rgb: 255, 255, 255;
-  --ion-color-medium-shade: #86888f;
-  --ion-color-medium-tint: #a2a4ab;
-
-  --ion-color-light: #d0f1ef;
-  --ion-color-light-rgb: 208, 241, 239;
-  --ion-color-light-contrast: #000000;
-  --ion-color-light-contrast-rgb: 0, 0, 0;
-  --ion-color-light-shade: #b7d4d2;
-  --ion-color-light-tint: #d5f2f1;
-
-  --ion-color-green: #8cc68d;
-  --ion-color-green-rgb: 140, 198, 141;
-  --ion-color-green-contrast: #ffffff;
-  --ion-color-green-contrast-rgb: 0, 0, 0;
-  --ion-color-green-shade: #7bae7c;
-  --ion-color-green-tint: #98cc98;
-
-  --ion-color-attention: #ecca58;
-  --ion-color-attention-rgb: 236, 202, 88;
-  --ion-color-attention-contrast: #000000;
-  --ion-color-attention-contrast-rgb: 0, 0, 0;
-  --ion-color-attention-shade: #d0b24d;
-  --ion-color-attention-tint: #eecf69;
+  /* === Ionic Component Overrides === */
+  --ion-font-family: var(--font-family-base);
+  --ion-default-font: var(--font-family-base);
 }
 
-.ion-color-attention {
-  --ion-color-base: var(--ion-color-attention);
-  --ion-color-base-rgb: var(--ion-color-attention-rgb);
-  --ion-color-contrast: var(--ion-color-attention-contrast);
-  --ion-color-contrast-rgb: var(--ion-color-attention-contrast-rgb);
-  --ion-color-shade: var(--ion-color-attention-shade);
-  --ion-color-tint: var(--ion-color-attention-tint);
-}
+/* === Dark Mode === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --macos-label: rgba(255, 255, 255, 0.85);
+    --macos-secondary-label: rgba(255, 255, 255, 0.55);
+    --macos-tertiary-label: rgba(255, 255, 255, 0.25);
+    --macos-separator: rgba(255, 255, 255, 0.1);
+    --macos-background: #1e1e1e;
+    --macos-secondary-background: #2d2d2d;
+    --macos-tertiary-background: #3a3a3a;
+    --macos-sidebar-background: rgba(40, 40, 45, 0.8);
+    --macos-list-background: rgba(30, 30, 30, 0.9);
+    --macos-selected: rgba(10, 132, 255, 0.25);
+    --macos-selected-unfocused: rgba(255, 255, 255, 0.08);
+    --macos-accent: #0A84FF;
+    --macos-control-background: rgba(255, 255, 255, 0.08);
 
-.ion-color-green {
-  --ion-color-base: var(--ion-color-green);
-  --ion-color-base-rgb: var(--ion-color-green-rgb);
-  --ion-color-contrast: var(--ion-color-green-contrast);
-  --ion-color-contrast-rgb: var(--ion-color-green-contrast-rgb);
-  --ion-color-shade: var(--ion-color-green-shade);
-  --ion-color-tint: var(--ion-color-green-tint);
+    --ion-background-color: var(--macos-background);
+    --ion-text-color: var(--macos-label);
+    --ion-text-color-rgb: 255, 255, 255;
+  }
 }

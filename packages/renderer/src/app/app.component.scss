@@ -1,0 +1,174 @@
+.macos-window {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--macos-background);
+}
+
+/* === Titlebar === */
+.macos-titlebar {
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  height: 52px;
+  background: var(--macos-secondary-background);
+  border-bottom: 1px solid var(--macos-separator);
+  padding: 0 12px;
+  flex-shrink: 0;
+
+  .traffic-lights-spacer {
+    width: 70px;
+    flex-shrink: 0;
+  }
+
+  .titlebar-center {
+    flex: 1;
+    text-align: center;
+    font-size: var(--font-size-title);
+    font-weight: 600;
+    color: var(--macos-label);
+  }
+
+  .titlebar-controls {
+    -webkit-app-region: no-drag;
+    display: flex;
+    gap: 8px;
+
+    .language-select {
+      font-size: 12px;
+      max-width: 150px;
+    }
+  }
+}
+
+/* === Three-column Layout === */
+.macos-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* === Column 1: Sidebar === */
+.macos-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: var(--macos-sidebar-background);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-right: 1px solid var(--macos-separator);
+
+  .sidebar-content {
+    --background: transparent;
+  }
+
+  .sidebar-section {
+    padding: 12px;
+
+    .section-title {
+      font-size: var(--font-size-small);
+      font-weight: 600;
+      color: var(--macos-secondary-label);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+  }
+}
+
+/* === Column 2: Chat List === */
+.macos-list-view {
+  width: 320px;
+  flex-shrink: 0;
+  background: var(--macos-list-background);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--macos-separator);
+
+  .list-content {
+    --background: transparent;
+  }
+
+  .chat-list {
+    background: transparent;
+    padding: 8px;
+
+    .chat-item {
+      --background: transparent;
+      --background-hover: var(--macos-control-background);
+      --background-activated: var(--macos-control-background);
+      border-radius: var(--border-radius-md);
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+
+      &:hover {
+        --background: var(--macos-control-background);
+      }
+
+      &.selected {
+        --background: var(--macos-selected);
+        --color: var(--macos-accent);
+
+        ion-label h2 {
+          color: var(--macos-accent);
+          font-weight: 600;
+        }
+      }
+
+      ion-avatar {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+      }
+
+      ion-label {
+        h2 {
+          font-size: var(--font-size-body);
+          font-weight: 500;
+          color: var(--macos-label);
+          margin: 0 0 2px 0;
+        }
+
+        p {
+          font-size: var(--font-size-small);
+          color: var(--macos-secondary-label);
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 24px;
+    text-align: center;
+
+    p {
+      color: var(--macos-secondary-label);
+      font-size: var(--font-size-body);
+    }
+  }
+}
+
+/* === Column 3: Detail View === */
+.macos-detail-view {
+  flex: 1;
+  background: var(--macos-background);
+  overflow: hidden;
+  position: relative;
+
+  ion-router-outlet {
+    height: 100%;
+  }
+}
+
+/* === Dark Mode Adjustments === */
+@media (prefers-color-scheme: dark) {
+  .macos-titlebar {
+    background: rgba(45, 45, 45, 0.95);
+  }
+}
