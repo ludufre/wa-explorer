@@ -3,6 +3,7 @@ export enum RendererEvent {
   Initialize = 'initialize',
   Choose = 'choose',
   PickupDialog = 'pickup-dialog',
+  GetMessages = 'get-messages',
 }
 
 export enum MainEvent {

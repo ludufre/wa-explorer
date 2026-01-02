@@ -17,3 +17,14 @@ export interface ISession {
   last: Date;
   picture: string;
 }
+
+export interface IMessage {
+  id: number;
+  from: string;
+  to: string;
+  text: string;
+  date: number;
+  isFromMe: boolean;
+  type: number;
+  groupMember?: string;
+}

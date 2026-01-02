@@ -13,6 +13,9 @@ const api = {
     ipcRenderer.invoke(RendererEvent.Choose, chatStorage, path),
 
   toMainPickupDialog: () => ipcRenderer.invoke(RendererEvent.PickupDialog),
+
+  toMainGetMessages: (chatStorage: string, path: string, contactJid: string) =>
+    ipcRenderer.invoke(RendererEvent.GetMessages, chatStorage, path, contactJid),
 };
 
 contextBridge.exposeInMainWorld('ipc', api);

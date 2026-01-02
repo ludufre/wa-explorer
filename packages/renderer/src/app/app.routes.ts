@@ -11,4 +11,9 @@ export const APP_ROUTES: Routes = [
     loadComponent: () =>
       import('./pages/pickup/pickup.page').then(m => m.PickupPage),
   },
+  {
+    path: 'detail/:contact',
+    loadComponent: () =>
+      import('./pages/detail/detail.component').then(m => m.DetailComponent),
+  },
 ];

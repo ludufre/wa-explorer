@@ -26,6 +26,29 @@ export interface IElectronAPI {
     db?: string;
     path?: string;
   }>;
+
+  toMainGetMessages: (
+    chatStorage: string,
+    path: string,
+    contactJid: string,
+  ) => Promise<{
+    ok: number;
+    msg?: string;
+    data?: {
+      id: number;
+      from: string;
+      to: string;
+      text: string;
+      date: number;
+      isFromMe: boolean;
+      type: number;
+      groupMember?: string;
+    }[];
+    session?: {
+      contact: string;
+      name: string;
+    };
+  }>;
 }
 
 declare global {

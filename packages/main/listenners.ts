@@ -9,6 +9,7 @@ export function initializeIpcHandlers(webContents: WebContents) {
     RendererEvent.Initialize,
     RendererEvent.AppRestart,
     RendererEvent.Choose,
+    RendererEvent.GetMessages,
   ]) {
     try {
       ipcMain.removeHandler(handler);
@@ -34,4 +35,12 @@ export function initializeIpcHandlers(webContents: WebContents) {
     console.log('🍏 Pickup Dialog');
     return load.pickup(event);
   });
+
+  ipcMain.handle(
+    RendererEvent.GetMessages,
+    async (_event, dbFile: string, base: string, contactJid: string) => {
+      console.log('🍏 Get Messages', contactJid);
+      return load.getMessages(dbFile, base, contactJid);
+    },
+  );
 }

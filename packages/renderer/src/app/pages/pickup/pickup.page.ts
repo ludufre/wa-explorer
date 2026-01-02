@@ -112,6 +112,7 @@ export class PickupPage {
       choose => {
         this.zone.run(() => {
           this.g.hideLoading();
+          this.data.selectedBackup = opt;
           this.data.sessions = choose.data;
           this.loaded = true;
         });
@@ -154,6 +155,10 @@ export class PickupPage {
           choose => {
             this.zone.run(() => {
               this.g.hideLoading();
+              this.data.selectedBackup = {
+                path: ret.path!,
+                chatStorage: ret.db!,
+              } as IBackup;
               this.data.sessions = choose.data;
               this.loaded = true;
             });

@@ -25,6 +25,17 @@
     "HOME": {
       "TITLE": "Escolha uma conversa",
       "MESSAGE": "No menu lateral você poderá escolher a conversa que deseja visualizar"
+    },
+    "DETAIL": {
+      "TITLE": "Conversa",
+      "LOADING": "Carregando mensagens...",
+      "NO_CONTACT": "Nenhum contato selecionado",
+      "NO_BACKUP_SELECTED": "Nenhum backup selecionado",
+      "ERROR_LOADING_MESSAGES": "Erro ao carregar mensagens",
+      "DB_NOT_FOUND": "Banco de dados não encontrado",
+      "SESSION_NOT_FOUND": "Conversa não encontrada",
+      "NO_MESSAGES": "Nenhuma mensagem encontrada",
+      "BACK_TO_HOME": "Voltar para a lista de conversas"
     }
   }
 }

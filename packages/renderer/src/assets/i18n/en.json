@@ -25,6 +25,17 @@
     "HOME": {
       "TITLE": "Choose a conversation",
       "MESSAGE": "In the side menu you can choose a conversation to view the conversation"
+    },
+    "DETAIL": {
+      "TITLE": "Conversation",
+      "LOADING": "Loading messages...",
+      "NO_CONTACT": "No contact selected",
+      "NO_BACKUP_SELECTED": "No backup selected",
+      "ERROR_LOADING_MESSAGES": "Error loading messages",
+      "DB_NOT_FOUND": "Database not found",
+      "SESSION_NOT_FOUND": "Conversation not found",
+      "NO_MESSAGES": "No messages found",
+      "BACK_TO_HOME": "Back to conversation list"
     }
   }
 }

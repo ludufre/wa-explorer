@@ -8,6 +8,7 @@ import bplist from 'bplist-parser';
 import BetterSqlite3 from 'better-sqlite3';
 import { ISession } from '../interfaces/session.interface';
 import { IManifestFile } from '../interfaces/apple-manifest.interface';
+import { IMessage } from '../interfaces/message.interface';
 import { parse } from 'date-fns';
 
 class LoadController {
@@ -141,6 +142,64 @@ class LoadController {
     }
 
     return { ok: 1, path, db: found.chatStorage };
+  }
+
+  getMessages(dbFile: string, base: string, contactJid: string) {
+    console.log('🔍 Getting messages for:', contactJid);
+    console.log('📁 DB:', path.join(base, dbFile));
+
+    if (!fs.existsSync(path.join(base, dbFile))) {
+      console.error('❌ DB file not found');
+      return { ok: 0, msg: 'PAGES.DETAIL.DB_NOT_FOUND' };
+    }
+
+    const db = BetterSqlite3(path.join(base, dbFile), {
+      readonly: true,
+    });
+
+    // Get the chat session to find the Z_PK
+    const session: ISession | undefined = db
+      .prepare('SELECT * FROM ZWACHATSESSION WHERE ZCONTACTJID = ?')
+      .get(contactJid) as ISession | undefined;
+
+    console.log('📱 Session found:', session ? `Yes (Z_PK: ${session.Z_PK})` : 'No');
+
+    if (!session) {
+      db.close();
+      console.error('❌ Session not found for contact:', contactJid);
+      return { ok: 0, msg: 'PAGES.DETAIL.SESSION_NOT_FOUND' };
+    }
+
+    // Get messages for this chat session
+    const messages: IMessage[] = db
+      .prepare(
+        `SELECT * FROM ZWAMESSAGE
+         WHERE ZCHATSESSION = ?
+         ORDER BY ZMESSAGEDATE ASC`,
+      )
+      .all(session.Z_PK) as IMessage[];
+
+    console.log(`💬 Messages found: ${messages.length}`);
+
+    db.close();
+
+    return {
+      ok: 1,
+      data: messages.map(m => ({
+        id: m.Z_PK,
+        from: m.ZFROMJID,
+        to: m.ZTOJID,
+        text: m.ZTEXT,
+        date: m.ZMESSAGEDATE,
+        isFromMe: m.ZISFROMME === 1,
+        type: m.ZMESSAGETYPE,
+        groupMember: m.ZGROUPMEMBER,
+      })),
+      session: {
+        contact: session.ZCONTACTJID,
+        name: session.ZPARTNERNAME,
+      },
+    };
   }
 
   private async handleIos(backupDir: string): Promise<IBackup> {
