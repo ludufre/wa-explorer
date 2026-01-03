@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { APP_CONFIG } from '../environments/environment';
 import { ElectronService, IconService } from './engine/services';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DateFnsConfigurationService } from 'ngx-date-fns';
 
 import {
   IonApp,
@@ -11,6 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 
 import { TranslateService } from '@ngx-translate/core';
+import { ptBR } from 'date-fns/locale';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +25,7 @@ export class AppComponent implements OnInit {
   translate = inject(TranslateService);
   icon = inject(IconService);
   damSan = inject(DomSanitizer);
+  dateFnsConfig = inject(DateFnsConfigurationService);
 
   appPages = [];
   labels = [];
@@ -39,6 +42,11 @@ export class AppComponent implements OnInit {
   changeLanguage(lang: string) {
     console.log('Changing language to:', lang);
     this.translate.use(lang);
+    if (lang === 'pt-br') {
+      this.dateFnsConfig.setLocale(ptBR);
+    } else {
+      this.dateFnsConfig.setLocale(undefined); // Default locale (English)
+    }
     localStorage.setItem('user-language', lang);
   }
 

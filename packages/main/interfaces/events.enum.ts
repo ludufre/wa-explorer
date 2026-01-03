@@ -4,6 +4,8 @@ export enum RendererEvent {
   Choose = 'choose',
   PickupDialog = 'pickup-dialog',
   GetMessages = 'get-messages',
+  GetMediaPath = 'get-media-path',
+  CloseBackup = 'close-backup',
 }
 
 export enum MainEvent {

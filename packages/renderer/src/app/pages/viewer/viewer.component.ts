@@ -44,7 +44,7 @@ export class ViewerComponent {
   searchQuery = signal('');
 
   get hasBackupSelected(): boolean {
-    return this.data.sessions().length > 0;
+    return (this.data.sessions() || []).length > 0;
   }
 
   filteredSessions = computed(() => {
@@ -52,16 +52,22 @@ export class ViewerComponent {
     if (!query) {
       return this.data.sessions();
     }
-    return this.data.sessions().filter(s =>
-      s.name.toLowerCase().includes(query)
-    );
+    return this.data
+      .sessions()
+      .filter(s => s.name.toLowerCase().includes(query));
   });
 
   handleSearch(event: any) {
     this.searchQuery.set(event.target.value || '');
   }
 
-  handleBackToPickup() {
+  async handleBackToPickup() {
+    // Close database cache before clearing data
+    const backup = this.data.selectedBackup;
+    if (backup?.chatStorage && backup?.path) {
+      await window.ipc.toMainCloseBackup(backup.chatStorage, backup.path);
+    }
+
     this.data.sessions.set([]);
     this.data.selectedBackup = null;
     this.router.navigate(['/viewer']);

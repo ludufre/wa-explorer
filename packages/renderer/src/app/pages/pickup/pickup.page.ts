@@ -16,6 +16,7 @@ import {
 } from '@ionic/angular/standalone';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { CommonModule } from '@angular/common';
+import { DateFnsModule } from 'ngx-date-fns';
 
 @Component({
   selector: 'app-pickup',
@@ -30,6 +31,7 @@ import { CommonModule } from '@angular/common';
     IonItem,
     IonLabel,
     TranslatePipe,
+    DateFnsModule,
   ],
 })
 export class PickupPage implements OnInit {

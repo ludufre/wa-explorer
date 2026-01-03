@@ -16,6 +16,12 @@ const api = {
 
   toMainGetMessages: (chatStorage: string, path: string, contactJid: string) =>
     ipcRenderer.invoke(RendererEvent.GetMessages, chatStorage, path, contactJid),
+
+  toMainGetMediaPath: (chatStorage: string, path: string, mediaItemId: number) =>
+    ipcRenderer.invoke(RendererEvent.GetMediaPath, chatStorage, path, mediaItemId),
+
+  toMainCloseBackup: (chatStorage: string, path: string) =>
+    ipcRenderer.invoke(RendererEvent.CloseBackup, chatStorage, path),
 };
 
 contextBridge.exposeInMainWorld('ipc', api);

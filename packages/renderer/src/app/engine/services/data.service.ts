@@ -32,4 +32,5 @@ export interface IMessage {
   isFromMe: boolean;
   type: number;
   groupMember?: string;
+  mediaItemId?: number | null;
 }

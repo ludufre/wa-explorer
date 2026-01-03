@@ -21,7 +21,8 @@
       "INVALID_INFO": "Invalid meta data",
       "INVALID_BACKUP": "Invalid backup data",
       "INVALID_MANIFEST": "Invalid Manifest",
-      "INVALID_MISSING": "No WhatsApp data"
+      "INVALID_MISSING": "No WhatsApp data",
+      "OR": "or"
     },
     "HOME": {
       "TITLE": "WhatsApp Explorer",

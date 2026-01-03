@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,15 +15,12 @@ interface IMessageGroup {
   selector: 'app-detail',
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss'],
-  imports: [
-    CommonModule,
-    TranslatePipe,
-    RouterLink,
-    IonContent,
-    IonSpinner,
-  ],
+  imports: [CommonModule, TranslatePipe, RouterLink, IonContent, IonSpinner],
 })
 export class DetailComponent implements OnInit {
+  route = inject(ActivatedRoute);
+  dataService = inject(DataService);
+
   @ViewChild(IonContent) content!: IonContent;
 
   contactJid: string = '';
@@ -32,11 +29,10 @@ export class DetailComponent implements OnInit {
   messageGroups: IMessageGroup[] = [];
   loading: boolean = true;
   error: string | null = null;
+  mediaPaths = new Map<number, string>();
+  loadingMedia = new Set<number>();
 
-  constructor(
-    private route: ActivatedRoute,
-    private dataService: DataService,
-  ) {}
+  constructor() {}
 
   async ngOnInit(): Promise<void> {
     this.contactJid = this.route.snapshot.paramMap.get('contact') || '';
@@ -85,6 +81,9 @@ export class DetailComponent implements OnInit {
 
         // Auto-scroll to bottom after messages load
         setTimeout(() => this.scrollToBottom(), 100);
+
+        // Load media asynchronously in background
+        this.loadMediaForMessages();
       } else {
         this.error = result.msg || 'PAGES.DETAIL.ERROR_LOADING_MESSAGES';
         console.error('Error from backend:', this.error);
@@ -109,7 +108,10 @@ export class DetailComponent implements OnInit {
     const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime();
     const actualDate = new Date(appleEpoch + timestamp * 1000);
 
-    return actualDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return actualDate.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 
   formatDateSeparator(timestamp: number): string {
@@ -141,11 +143,11 @@ export class DetailComponent implements OnInit {
     const groups: IMessageGroup[] = [];
     const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime();
 
-    this.messages.forEach((message) => {
+    this.messages.forEach(message => {
       const messageDate = new Date(appleEpoch + message.date * 1000);
       const dateKey = messageDate.toDateString();
 
-      let group = groups.find((g) => g.dateObj.toDateString() === dateKey);
+      let group = groups.find(g => g.dateObj.toDateString() === dateKey);
 
       if (!group) {
         group = {
@@ -163,8 +165,49 @@ export class DetailComponent implements OnInit {
   }
 
   scrollToBottom(): void {
+    console.log({ scrollbottom: this.content });
     if (this.content) {
       this.content.scrollToBottom(300);
     }
+  }
+
+  async loadMediaForMessages(): Promise<void> {
+    const backup = this.dataService.selectedBackup;
+    if (!backup || !backup.chatStorage || !backup.path) return;
+
+    const messagesWithMedia = this.messages.filter(m => m.mediaItemId);
+
+    // Load media in batches to avoid overwhelming the system
+    for (const message of messagesWithMedia) {
+      if (!message.mediaItemId || this.loadingMedia.has(message.mediaItemId)) {
+        continue;
+      }
+
+      this.loadingMedia.add(message.mediaItemId);
+
+      try {
+        const result = await window.ipc.toMainGetMediaPath(
+          backup.chatStorage,
+          backup.path,
+          message.mediaItemId,
+        );
+
+        if (result.ok === 1 && result.path) {
+          this.mediaPaths.set(message.mediaItemId, result.path);
+        }
+      } catch (err) {
+        console.error('Error loading media:', err);
+      } finally {
+        this.loadingMedia.delete(message.mediaItemId);
+      }
+
+      // Small delay between requests to avoid blocking
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+  }
+
+  getMediaPath(mediaItemId?: number | null): string | null {
+    if (!mediaItemId) return null;
+    return this.mediaPaths.get(mediaItemId) || null;
   }
 }

@@ -36,7 +36,20 @@
                 @if (!message.isFromMe && message.groupMember) {
                   <div class="message-sender">{{ message.groupMember }}</div>
                 }
-                <div class="message-text">{{ message.text || '(media)' }}</div>
+                @if (message.mediaItemId) {
+                  <div class="message-media">
+                    @if (getMediaPath(message.mediaItemId); as mediaPath) {
+                      <img [src]="mediaPath" alt="Media" />
+                    } @else {
+                      <div class="media-placeholder">
+                        <ion-spinner name="crescent"></ion-spinner>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (message.text) {
+                  <div class="message-text">{{ message.text }}</div>
+                }
                 <div class="message-time">{{ formatTime(message.date) }}</div>
               </div>
             </div>

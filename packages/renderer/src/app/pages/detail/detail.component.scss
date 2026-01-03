@@ -125,6 +125,35 @@
   margin-bottom: 4px;
 }
 
+.message-media {
+  margin-bottom: 4px;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 100%;
+
+  img {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  .media-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 150px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+
+    ion-spinner {
+      --color: #667781;
+    }
+  }
+}
+
 .message-text {
   font-size: 14px;
   line-height: 19px;

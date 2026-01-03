@@ -10,7 +10,89 @@ import { ISession } from '../interfaces/session.interface';
 import { IManifestFile } from '../interfaces/apple-manifest.interface';
 import { IMessage } from '../interfaces/message.interface';
 
+interface DatabaseCache {
+  chatStorageDb: BetterSqlite3.Database;
+  manifestDb: BetterSqlite3.Database;
+  mediaItems: Map<number, any>;
+  manifestFiles: IManifestFile[];
+}
+
 class LoadController {
+  private dbCache: Map<string, DatabaseCache> = new Map();
+
+  private getOrCreateCache(dbFile: string, base: string): DatabaseCache | null {
+    const cacheKey = dbFile;
+
+    if (this.dbCache.has(cacheKey)) {
+      return this.dbCache.get(cacheKey)!;
+    }
+
+    const chatStoragePath = dbFile;
+    const manifestPath = path.join(base, 'Manifest.db');
+
+    if (!fs.existsSync(chatStoragePath) || !fs.existsSync(manifestPath)) {
+      return null;
+    }
+
+    console.log('📂 Opening database connections for cache:', cacheKey);
+
+    const chatStorageDb = BetterSqlite3(chatStoragePath, { readonly: true });
+    const manifestDb = BetterSqlite3(manifestPath, { readonly: true });
+
+    // Pre-load all media items and manifest files
+    const mediaItemsArray = chatStorageDb
+      .prepare('SELECT * FROM ZWAMEDIAITEM')
+      .all() as any[];
+
+    const mediaItems = new Map<number, any>();
+    mediaItemsArray.forEach(item => {
+      mediaItems.set(item.Z_PK, item);
+    });
+
+    const manifestFiles = manifestDb
+      .prepare(
+        'SELECT fileID, relativePath FROM Files WHERE flags = 1 AND domain = ?',
+      )
+      .all(
+        'AppDomainGroup-group.net.whatsapp.WhatsApp.shared',
+      ) as IManifestFile[];
+
+    const cache: DatabaseCache = {
+      chatStorageDb,
+      manifestDb,
+      mediaItems,
+      manifestFiles,
+    };
+
+    this.dbCache.set(cacheKey, cache);
+    console.log(
+      `✅ Cache created with ${mediaItems.size} media items and ${manifestFiles.length} manifest files`,
+    );
+
+    return cache;
+  }
+
+  closeCache(dbFile: string, base: string): void {
+    const cacheKey = `${base}:${dbFile}`;
+    const cache = this.dbCache.get(cacheKey);
+
+    if (cache) {
+      console.log('🔒 Closing database connections for:', cacheKey);
+      cache.chatStorageDb.close();
+      cache.manifestDb.close();
+      this.dbCache.delete(cacheKey);
+    }
+  }
+
+  closeAllCaches(): void {
+    console.log('🔒 Closing all database connections');
+    this.dbCache.forEach(cache => {
+      cache.chatStorageDb.close();
+      cache.manifestDb.close();
+    });
+    this.dbCache.clear();
+  }
+
   async load() {
     let itunes: IBackup[] = [];
 
@@ -27,7 +109,13 @@ class LoadController {
 
         for await (const dir of list) {
           const backupDir = path.join(backupsDir, dir);
-          itunes.push(await this.handleIos(backupDir));
+          const found = await this.handleIos(backupDir);
+          if (!!!found?.chatStorage) {
+            continue;
+          }
+
+          found.chatStorage = path.join(backupDir, found.chatStorage || '');
+          itunes.push(found);
         }
       }
     }
@@ -36,11 +124,11 @@ class LoadController {
   }
 
   choose(dbFile: string, base: string) {
-    console.log(path.join(base, dbFile));
+    console.log(dbFile);
     console.log(path.join(base, 'Manifest.db'));
 
     if (
-      !fs.existsSync(path.join(base, dbFile)) ||
+      !fs.existsSync(dbFile) ||
       !fs.existsSync(path.join(base, 'Manifest.db'))
     ) {
       console.log(dbFile);
@@ -48,7 +136,7 @@ class LoadController {
       return { ok: 0, msg: 'PAGES.PICKUP.NOT_FOUND' };
     }
 
-    const db = BetterSqlite3(path.join(base, dbFile), {
+    const db = BetterSqlite3(dbFile, {
       readonly: true,
     });
 
@@ -139,14 +227,14 @@ class LoadController {
 
   getMessages(dbFile: string, base: string, contactJid: string) {
     console.log('🔍 Getting messages for:', contactJid);
-    console.log('📁 DB:', path.join(base, dbFile));
+    console.log('📁 DB:', dbFile);
 
-    if (!fs.existsSync(path.join(base, dbFile))) {
+    if (!fs.existsSync(dbFile)) {
       console.error('❌ DB file not found');
       return { ok: 0, msg: 'PAGES.DETAIL.DB_NOT_FOUND' };
     }
 
-    const db = BetterSqlite3(path.join(base, dbFile), {
+    const db = BetterSqlite3(dbFile, {
       readonly: true,
     });
 
@@ -190,12 +278,53 @@ class LoadController {
         isFromMe: m.ZISFROMME === 1,
         type: m.ZMESSAGETYPE,
         groupMember: m.ZGROUPMEMBER,
+        mediaItemId: m.ZMEDIAITEM || null,
       })),
       session: {
         contact: session.ZCONTACTJID,
         name: session.ZPARTNERNAME,
       },
     };
+  }
+
+  getMediaPath(dbFile: string, base: string, mediaItemId: number) {
+    if (!mediaItemId) return { ok: 0, path: null };
+
+    const cache = this.getOrCreateCache(dbFile, base);
+    if (!cache) {
+      console.error('❌ Could not create cache for:', dbFile, base);
+      return { ok: 0, path: null };
+    }
+
+    const mediaItem = cache.mediaItems.get(mediaItemId);
+    if (!mediaItem) {
+      return { ok: 0, path: null };
+    }
+
+    const relativePath = mediaItem.ZMEDIALOCALPATH;
+    if (!relativePath) {
+      return { ok: 0, path: null };
+    }
+
+    const fileInfo = cache.manifestFiles.find(f =>
+      f.relativePath.includes(relativePath),
+    );
+
+    if (!fileInfo) {
+      return { ok: 0, path: null };
+    }
+
+    const filePath = path.join(
+      base,
+      fileInfo.fileID.substring(0, 2),
+      fileInfo.fileID,
+    );
+
+    if (!fs.existsSync(filePath)) {
+      return { ok: 0, path: null };
+    }
+
+    return { ok: 1, path: `local-file://${filePath}` };
   }
 
   private async handleIos(backupDir: string): Promise<IBackup> {

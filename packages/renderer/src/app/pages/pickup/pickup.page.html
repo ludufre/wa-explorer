@@ -1,7 +1,12 @@
 <ion-content class="pickup-content">
   <div class="pickup-container">
     <div class="pickup-header">
-      <ion-button (click)="backToHome()" fill="clear" size="small" class="back-button">
+      <ion-button
+        (click)="backToHome()"
+        fill="clear"
+        size="small"
+        class="back-button"
+      >
         <fa-icon icon="chevron-left"></fa-icon>
         {{ 'PAGES.PICKUP.BACK_TO_HOME' | translate }}
       </ion-button>
@@ -12,9 +17,6 @@
     </div>
 
     @if (loaded) {
-      <ion-button (click)="dialog()">
-        {{ 'PAGES.PICKUP.PICK_FOLDER' | translate }}
-      </ion-button>
       @if (options.length > 0) {
         <ion-list class="round" lines="full">
           <div class="list-header">
@@ -43,7 +45,7 @@
                   <h2>
                     {{ opt.device }} / {{ opt.version }} / {{ opt.serial }}
                   </h2>
-                  <h3>{{ opt.date }} ({{ opt.date }})</h3>
+                  <h3>{{ opt.date | dfnsFormat: 'dd/MM/yyyy HH:mm' }}h</h3>
                 }
                 <p>{{ opt.path }}</p>
                 @if (!!opt.error) {
@@ -53,11 +55,21 @@
             </ion-item>
           }
         </ion-list>
+
+        <div class="ion-text-center">
+          <p>{{ 'PAGES.PICKUP.OR' | translate }}</p>
+        </div>
       }
 
       @if (options.length === 0) {
         <h2 color="primary">{{ 'PAGES.PICKUP.EMPTY' | translate }}</h2>
       }
+
+      <div class="ion-text-center">
+        <ion-button (click)="dialog()" class="ion-text-center">
+          {{ 'PAGES.PICKUP.PICK_FOLDER' | translate }}
+        </ion-button>
+      </div>
     }
 
     @if (!loaded) {

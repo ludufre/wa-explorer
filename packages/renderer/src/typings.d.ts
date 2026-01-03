@@ -43,11 +43,28 @@ export interface IElectronAPI {
       isFromMe: boolean;
       type: number;
       groupMember?: string;
+      mediaItemId?: number | null;
     }[];
     session?: {
       contact: string;
       name: string;
     };
+  }>;
+
+  toMainGetMediaPath: (
+    chatStorage: string,
+    path: string,
+    mediaItemId: number,
+  ) => Promise<{
+    ok: number;
+    path: string | null;
+  }>;
+
+  toMainCloseBackup: (
+    chatStorage: string,
+    path: string,
+  ) => Promise<{
+    ok: number;
   }>;
 }
 
