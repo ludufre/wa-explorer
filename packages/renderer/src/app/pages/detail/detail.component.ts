@@ -1,4 +1,13 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ChangeDetectorRef,
+  ElementRef,
+  AfterViewChecked,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,12 +37,14 @@ interface IMessageGroup {
     InfiniteScrollModule,
   ],
 })
-export class DetailComponent implements OnInit, OnDestroy {
+export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
   route = inject(ActivatedRoute);
   dataService = inject(DataService);
   private cdr = inject(ChangeDetectorRef);
 
   @ViewChild(IonContent) content!: IonContent;
+  @ViewChild('messagesScrollContainer')
+  private messagesScrollContainer?: ElementRef<HTMLDivElement>;
 
   contactJid: string = '';
   contactName: string = '';
@@ -54,6 +65,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   isLoadingMore = false;
   private loadingPromise: Promise<void> | null = null;
   private paramsSubscription?: Subscription;
+  private pendingInitialScroll = false;
 
   constructor() {}
 
@@ -85,6 +97,27 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.loadingPromise = null;
   }
 
+  ngAfterViewChecked(): void {
+    if (!this.pendingInitialScroll) {
+      return;
+    }
+
+    const container = this.messagesScrollContainer?.nativeElement;
+    if (!container) {
+      return;
+    }
+
+    this.pendingInitialScroll = false;
+
+    requestAnimationFrame(() => {
+      this.scrollToBottom();
+      setTimeout(() => {
+        this.showMessages = true;
+        this.cdr.markForCheck();
+      }, 50);
+    });
+  }
+
   private resetState(): void {
     this.messages = [];
     this.messageGroups = [];
@@ -98,6 +131,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = null;
     this.showMessages = false;
+    this.pendingInitialScroll = false;
   }
 
   async loadMessages(): Promise<void> {
@@ -165,23 +199,15 @@ export class DetailComponent implements OnInit, OnDestroy {
         // CRITICAL: Set loading = false BEFORE scrolling so the div exists in DOM
         this.loading = false;
 
-        // Aguardar renderização completa do Angular e então fazer scroll pro bottom
+        // Aguardar renderização completa do Angular e então sinalizar o scroll pro bottom
         // Forçar detecção de mudanças primeiro
         this.cdr.detectChanges();
 
-        // Usar múltiplos requestAnimationFrame para garantir que o DOM foi atualizado
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setTimeout(() => {
-              this.scrollToBottom();
-              console.log('Scroll to bottom executado');
-              // Mostrar mensagens após scroll
-              setTimeout(() => {
-                this.showMessages = true;
-              }, 50);
-            }, 100);
-          });
-        });
+        if (this.messages.length > 0) {
+          this.pendingInitialScroll = true;
+        } else {
+          this.showMessages = true;
+        }
 
         // Load media asynchronously in background
         this.loadMediaForMessages();
@@ -365,31 +391,30 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   scrollToBottom(): void {
-    const scrollContainer = document.querySelector('.messages-scroll-container');
+    const scrollContainer = this.messagesScrollContainer?.nativeElement;
     console.log('scrollToBottom - container:', scrollContainer);
-    if (scrollContainer) {
-      console.log('scrollHeight:', scrollContainer.scrollHeight, 'scrollTop before:', scrollContainer.scrollTop);
-
-      // Scroll instantâneo sem animação - usar um valor muito alto para garantir
-      const targetScroll = scrollContainer.scrollHeight + 10000;
-      scrollContainer.scrollTop = targetScroll;
-
-      console.log('scrollTop after:', scrollContainer.scrollTop, 'target was:', targetScroll);
-
-      // Verificar se realmente chegou ao bottom
-      const isAtBottom = Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 5;
-      console.log('Is at bottom?', isAtBottom);
-
-      if (!isAtBottom) {
-        // Tentar novamente após um delay
-        console.warn('Not at bottom after scroll, trying again...');
-        setTimeout(() => {
-          scrollContainer.scrollTop = scrollContainer.scrollHeight + 10000;
-          console.log('Second attempt - scrollTop:', scrollContainer.scrollTop);
-        }, 50);
-      }
-    } else {
+    if (!scrollContainer) {
       console.error('Scroll container não encontrado!');
+      return;
+    }
+
+    console.log('scrollHeight:', scrollContainer.scrollHeight, 'scrollTop before:', scrollContainer.scrollTop);
+
+    const targetScroll = Math.max(scrollContainer.scrollHeight - scrollContainer.clientHeight, 0);
+    scrollContainer.scrollTop = targetScroll;
+
+    console.log('scrollTop after:', scrollContainer.scrollTop, 'target was:', targetScroll);
+
+    const isAtBottom =
+      Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 5;
+    console.log('Is at bottom?', isAtBottom);
+
+    if (!isAtBottom) {
+      requestAnimationFrame(() => {
+        const retryTarget = Math.max(scrollContainer.scrollHeight - scrollContainer.clientHeight, 0);
+        scrollContainer.scrollTop = retryTarget;
+        console.log('Second attempt - scrollTop:', scrollContainer.scrollTop);
+      });
     }
   }
 

@@ -26,6 +26,7 @@
 
     @if (!loading && !error && messages.length > 0) {
       <div
+        #messagesScrollContainer
         class="messages-scroll-container"
         infiniteScroll
         [infiniteScrollDistance]="0.5"
