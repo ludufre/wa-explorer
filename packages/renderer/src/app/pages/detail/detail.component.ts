@@ -7,6 +7,7 @@ import {
   ChangeDetectorRef,
   ElementRef,
   AfterViewChecked,
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -66,6 +67,11 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
   private loadingPromise: Promise<void> | null = null;
   private paramsSubscription?: Subscription;
   private pendingInitialScroll = false;
+  mediaViewer: {
+    url: string;
+    type: 'image' | 'video';
+    messageId: number;
+  } | null = null;
 
   constructor() {}
 
@@ -73,7 +79,12 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
     // Usar subscribe ao invés de snapshot para detectar mudanças de rota
     this.paramsSubscription = this.route.paramMap.subscribe(async params => {
       const newContactJid = params.get('contact') || '';
-      console.log('Route params changed - old:', this.contactJid, 'new:', newContactJid);
+      console.log(
+        'Route params changed - old:',
+        this.contactJid,
+        'new:',
+        newContactJid,
+      );
 
       if (newContactJid !== this.contactJid) {
         // Reset state quando muda de conversa
@@ -132,6 +143,7 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.error = null;
     this.showMessages = false;
     this.pendingInitialScroll = false;
+    this.mediaViewer = null;
   }
 
   async loadMessages(): Promise<void> {
@@ -156,7 +168,7 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
         backup.chatStorage,
         backup.path,
         this.contactJid,
-        1,  // Load just 1 message to get total count
+        1, // Load just 1 message to get total count
         0,
       );
 
@@ -175,7 +187,9 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
       const offset = Math.max(0, this.totalMessages - this.INITIAL_LOAD);
       this.currentOffset = offset;
 
-      console.log(`Loading last ${this.INITIAL_LOAD} messages (offset: ${offset})`);
+      console.log(
+        `Loading last ${this.INITIAL_LOAD} messages (offset: ${offset})`,
+      );
 
       // Load the actual initial batch of messages
       const result = await window.ipc.toMainGetMessagesPaginated(
@@ -191,7 +205,9 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (result.ok === 1 && result.data) {
         this.messages = result.data.messages || [];
         this.hasMoreMessages = result.data.hasMore;
-        console.log(`Loaded ${this.messages.length} messages, hasMore: ${this.hasMoreMessages}`);
+        console.log(
+          `Loaded ${this.messages.length} messages, hasMore: ${this.hasMoreMessages}`,
+        );
 
         // Group messages by date
         this.messageGroups = this.groupMessagesByDate();
@@ -247,7 +263,9 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
 
         // Guardar posição de scroll ANTES de adicionar mensagens
-        const scrollElement = document.querySelector('.messages-scroll-container');
+        const scrollElement = document.querySelector(
+          '.messages-scroll-container',
+        );
         if (!scrollElement) return;
 
         const oldScrollHeight = scrollElement.scrollHeight;
@@ -291,9 +309,11 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.cdr.detectChanges();
 
           // Aguardar próximo frame de renderização
-          await new Promise(resolve => requestAnimationFrame(() => {
-            requestAnimationFrame(() => resolve(undefined));
-          }));
+          await new Promise(resolve =>
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => resolve(undefined));
+            }),
+          );
 
           // Restaurar posição de scroll
           const newScrollHeight = scrollElement.scrollHeight;
@@ -398,20 +418,40 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
       return;
     }
 
-    console.log('scrollHeight:', scrollContainer.scrollHeight, 'scrollTop before:', scrollContainer.scrollTop);
+    console.log(
+      'scrollHeight:',
+      scrollContainer.scrollHeight,
+      'scrollTop before:',
+      scrollContainer.scrollTop,
+    );
 
-    const targetScroll = Math.max(scrollContainer.scrollHeight - scrollContainer.clientHeight, 0);
+    const targetScroll = Math.max(
+      scrollContainer.scrollHeight - scrollContainer.clientHeight,
+      0,
+    );
     scrollContainer.scrollTop = targetScroll;
 
-    console.log('scrollTop after:', scrollContainer.scrollTop, 'target was:', targetScroll);
+    console.log(
+      'scrollTop after:',
+      scrollContainer.scrollTop,
+      'target was:',
+      targetScroll,
+    );
 
     const isAtBottom =
-      Math.abs(scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight) < 5;
+      Math.abs(
+        scrollContainer.scrollHeight -
+          scrollContainer.scrollTop -
+          scrollContainer.clientHeight,
+      ) < 5;
     console.log('Is at bottom?', isAtBottom);
 
     if (!isAtBottom) {
       requestAnimationFrame(() => {
-        const retryTarget = Math.max(scrollContainer.scrollHeight - scrollContainer.clientHeight, 0);
+        const retryTarget = Math.max(
+          scrollContainer.scrollHeight - scrollContainer.clientHeight,
+          0,
+        );
         scrollContainer.scrollTop = retryTarget;
         console.log('Second attempt - scrollTop:', scrollContainer.scrollTop);
       });
@@ -458,7 +498,41 @@ export class DetailComponent implements OnInit, OnDestroy, AfterViewChecked {
     return this.mediaPaths.get(mediaItemId) || null;
   }
 
-  getMediaType(message: IMessage): 'image' | 'video' | 'audio' | 'pdf' | 'text' | 'system' | 'other' {
+  hasRenderableMedia(message: IMessage): boolean {
+    return (
+      this.isImage(message) ||
+      this.isVideo(message) ||
+      this.isAudio(message) ||
+      this.isPDF(message)
+    );
+  }
+
+  openMediaViewer(
+    message: IMessage,
+    url: string,
+    type: 'image' | 'video',
+  ): void {
+    this.mediaViewer = {
+      url,
+      type,
+      messageId: message.id,
+    };
+  }
+
+  closeMediaViewer(): void {
+    this.mediaViewer = null;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onWindowKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.mediaViewer) {
+      this.closeMediaViewer();
+    }
+  }
+
+  getMediaType(
+    message: IMessage,
+  ): 'image' | 'video' | 'audio' | 'pdf' | 'text' | 'system' | 'other' {
     return MessageTypeHelper.getMediaType(message.type);
   }
 

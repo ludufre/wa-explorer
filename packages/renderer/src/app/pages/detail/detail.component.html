@@ -14,7 +14,9 @@
     @if (error) {
       <div class="error-container">
         <p>{{ error | translate }}</p>
-        <a routerLink="/pickup">{{ 'PAGES.DETAIL.BACK_TO_HOME' | translate }}</a>
+        <a routerLink="/pickup">
+          {{ 'PAGES.DETAIL.BACK_TO_HOME' | translate }}
+        </a>
       </div>
     }
 
@@ -34,8 +36,8 @@
         [infiniteScrollThrottle]="150"
         [scrollWindow]="false"
         (scrolledUp)="loadMoreMessages()"
-        [style.opacity]="showMessages ? '1' : '0'">
-
+        [style.opacity]="showMessages ? '1' : '0'"
+      >
         <!-- Loading indicator no topo -->
         @if (isLoadingMore) {
           <div class="loading-more">
@@ -45,97 +47,162 @@
         }
 
         <div class="messages-list">
-        @for (group of messageGroups; track group.dateObj) {
-          <div class="date-separator">
-            <span>{{ group.date }}</span>
-          </div>
-          @for (message of group.messages; track message.id) {
-            <div class="message"
-                 [class.from-me]="message.isFromMe"
-                 [class.from-them]="!message.isFromMe"
-                 [class.system-message]="isSystemMessage(message)">
-              <div class="message-bubble">
-                @if (!message.isFromMe && message.groupMember) {
-                  <div class="message-sender">{{ message.groupMember }}</div>
-                }
-
-                @if (message.mediaItemId) {
-                  <div class="message-media" [class.view-once]="isViewOnce(message)">
-                    @if (getMediaPath(message.mediaItemId); as mediaPath) {
-
-                      <!-- Image types (Picture, GIF, Sticker, etc.) -->
-                      @if (isImage(message)) {
-                        <img [src]="mediaPath"
-                             alt="Image"
-                             [class.sticker]="message.type === 15"
-                             loading="lazy" />
-                      }
-
-                      <!-- Video types -->
-                      @if (isVideo(message)) {
-                        <video [src]="mediaPath"
-                               controls
-                               preload="metadata"
-                               playsinline>
-                          {{ 'PAGES.DETAIL.VIDEO_NOT_SUPPORTED' | translate }}
-                        </video>
-                      }
-
-                      <!-- Audio types -->
-                      @if (isAudio(message)) {
-                        <div class="audio-container">
-                          <audio [src]="mediaPath"
-                                 controls
-                                 preload="metadata">
-                            {{ 'PAGES.DETAIL.AUDIO_NOT_SUPPORTED' | translate }}
-                          </audio>
-                        </div>
-                      }
-
-                      <!-- PDF types -->
-                      @if (isPDF(message)) {
-                        <div class="pdf-container">
-                          <a [href]="mediaPath"
-                             target="_blank"
-                             class="pdf-link">
-                            <ion-icon name="document-text-outline"></ion-icon>
-                            <span>{{ message.text || 'PDF Document' }}</span>
-                          </a>
-                          <button class="download-btn"
-                                  (click)="downloadMedia(mediaPath, message.text || 'document.pdf')">
-                            <ion-icon name="download-outline"></ion-icon>
-                          </button>
-                        </div>
-                      }
-
-                      @if (isViewOnce(message)) {
-                        <div class="view-once-badge">
-                          <ion-icon name="eye-outline"></ion-icon>
-                          <span>{{ 'PAGES.DETAIL.VIEW_ONCE' | translate }}</span>
-                        </div>
-                      }
-
-                    } @else {
-                      <div class="media-placeholder">
-                        <ion-spinner name="crescent"></ion-spinner>
-                      </div>
-                    }
-                  </div>
-                }
-
-                @if (message.text && !isPDF(message)) {
-                  <div class="message-text">{{ message.text }}</div>
-                }
-
-                @if (!isSystemMessage(message)) {
-                  <div class="message-time">{{ formatTime(message.date) }}</div>
-                }
-              </div>
+          @for (group of messageGroups; track group.dateObj) {
+            <div class="date-separator">
+              <span>{{ group.date }}</span>
             </div>
+            @for (message of group.messages; track message.id) {
+              <div
+                class="message"
+                [class.from-me]="message.isFromMe"
+                [class.from-them]="!message.isFromMe"
+                [class.system-message]="isSystemMessage(message)"
+              >
+                <div class="message-bubble">
+                  @if (!message.isFromMe && message.groupMember) {
+                    <div class="message-sender">{{ message.groupMember }}</div>
+                  }
+
+                  @if (message.mediaItemId && hasRenderableMedia(message)) {
+                    <div
+                      class="message-media"
+                      [class.view-once]="isViewOnce(message)"
+                    >
+                      @if (getMediaPath(message.mediaItemId); as mediaPath) {
+                        <!-- Image types (Picture, GIF, Sticker, etc.) -->
+                        @if (isImage(message)) {
+                          <button
+                            type="button"
+                            class="media-square-preview"
+                            (click)="
+                              openMediaViewer(message, mediaPath, 'image')
+                            "
+                          >
+                            <img
+                              [src]="mediaPath"
+                              alt="Image preview"
+                              [class.sticker]="message.type === 15"
+                              loading="lazy"
+                            />
+                          </button>
+                        }
+
+                        <!-- Video types -->
+                        @if (isVideo(message)) {
+                          <button
+                            type="button"
+                            class="media-square-preview"
+                            (click)="
+                              openMediaViewer(message, mediaPath, 'video')
+                            "
+                          >
+                            <video
+                              [src]="mediaPath"
+                              preload="auto"
+                              muted
+                              autoplay
+                              loop
+                              playsinline
+                            >
+                              {{
+                                'PAGES.DETAIL.VIDEO_NOT_SUPPORTED' | translate
+                              }}
+                            </video>
+                            <div class="media-square-preview__play">
+                              <ion-icon name="play"></ion-icon>
+                            </div>
+                          </button>
+                        }
+
+                        <!-- Audio types -->
+                        @if (isAudio(message)) {
+                          <div class="audio-container">
+                            <audio
+                              [src]="mediaPath"
+                              controls
+                              preload="metadata"
+                            >
+                              {{
+                                'PAGES.DETAIL.AUDIO_NOT_SUPPORTED' | translate
+                              }}
+                            </audio>
+                          </div>
+                        }
+
+                        <!-- PDF types -->
+                        @if (isPDF(message)) {
+                          <div class="pdf-container">
+                            <a
+                              [href]="mediaPath"
+                              target="_blank"
+                              class="pdf-link"
+                            >
+                              <ion-icon name="document-text-outline"></ion-icon>
+                              <span>{{ message.text || 'PDF Document' }}</span>
+                            </a>
+                            <button
+                              class="download-btn"
+                              (click)="
+                                downloadMedia(
+                                  mediaPath,
+                                  message.text || 'document.pdf'
+                                )
+                              "
+                            >
+                              <ion-icon name="download-outline"></ion-icon>
+                            </button>
+                          </div>
+                        }
+
+                        @if (isViewOnce(message)) {
+                          <div class="view-once-badge">
+                            <ion-icon name="eye-outline"></ion-icon>
+                            <span>
+                              {{ 'PAGES.DETAIL.VIEW_ONCE' | translate }}
+                            </span>
+                          </div>
+                        }
+                      } @else {
+                        <div class="media-square-preview media-placeholder">
+                          <ion-spinner name="crescent"></ion-spinner>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (message.text && !isPDF(message)) {
+                    <div class="message-text">{{ message.text }}</div>
+                  }
+
+                  @if (!isSystemMessage(message)) {
+                    <div class="message-time">
+                      {{ formatTime(message.date) }}
+                    </div>
+                  }
+                </div>
+              </div>
+            }
           }
-        }
         </div>
       </div>
     }
   </div>
+  @if (mediaViewer) {
+    <div class="media-viewer-backdrop" (click)="closeMediaViewer()">
+      <div class="media-viewer" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          class="media-viewer__close"
+          (click)="closeMediaViewer()"
+        >
+          <ion-icon name="close"></ion-icon>
+        </button>
+        @if (mediaViewer.type === 'image') {
+          <img [src]="mediaViewer.url" alt="Image preview" loading="lazy" />
+        } @else {
+          <video [src]="mediaViewer.url" controls autoplay playsinline></video>
+        }
+      </div>
+    </div>
+  }
 </ion-content>
