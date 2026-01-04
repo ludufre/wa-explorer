@@ -15,6 +15,7 @@ import { DataService } from '../../engine/services';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { PickupPage } from '../pickup/pickup.page';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-viewer',
@@ -35,6 +36,7 @@ import { PickupPage } from '../pickup/pickup.page';
     TranslatePipe,
     FaIconComponent,
     PickupPage,
+    ScrollingModule,
   ],
 })
 export class ViewerComponent {

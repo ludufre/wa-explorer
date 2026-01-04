@@ -17,6 +17,22 @@ const api = {
   toMainGetMessages: (chatStorage: string, path: string, contactJid: string) =>
     ipcRenderer.invoke(RendererEvent.GetMessages, chatStorage, path, contactJid),
 
+  toMainGetMessagesPaginated: (
+    chatStorage: string,
+    path: string,
+    contactJid: string,
+    limit: number,
+    offset: number,
+  ) =>
+    ipcRenderer.invoke(
+      RendererEvent.GetMessagesPaginated,
+      chatStorage,
+      path,
+      contactJid,
+      limit,
+      offset,
+    ),
+
   toMainGetMediaPath: (chatStorage: string, path: string, mediaItemId: number) =>
     ipcRenderer.invoke(RendererEvent.GetMediaPath, chatStorage, path, mediaItemId),
 

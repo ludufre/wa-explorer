@@ -51,6 +51,37 @@ export interface IElectronAPI {
     };
   }>;
 
+  toMainGetMessagesPaginated: (
+    chatStorage: string,
+    path: string,
+    contactJid: string,
+    limit: number,
+    offset: number,
+  ) => Promise<{
+    ok: number;
+    msg?: string;
+    data?: {
+      messages: {
+        id: number;
+        from: string;
+        to: string;
+        text: string;
+        date: number;
+        isFromMe: boolean;
+        type: number;
+        groupMember?: string;
+        mediaItemId?: number | null;
+      }[];
+      total: number;
+      hasMore: boolean;
+      offset: number;
+    };
+    session?: {
+      contact: string;
+      name: string;
+    };
+  }>;
+
   toMainGetMediaPath: (
     chatStorage: string,
     path: string,

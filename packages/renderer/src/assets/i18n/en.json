@@ -49,7 +49,10 @@
       "DB_NOT_FOUND": "Database not found",
       "SESSION_NOT_FOUND": "Conversation not found",
       "NO_MESSAGES": "No messages found",
-      "BACK_TO_HOME": "Back to conversation list"
+      "BACK_TO_HOME": "Back to conversation list",
+      "VIDEO_NOT_SUPPORTED": "Your browser does not support video",
+      "AUDIO_NOT_SUPPORTED": "Your browser does not support audio",
+      "VIEW_ONCE": "View once"
     }
   }
 }

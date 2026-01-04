@@ -10,6 +10,7 @@ export function initializeIpcHandlers(webContents: WebContents) {
     RendererEvent.AppRestart,
     RendererEvent.Choose,
     RendererEvent.GetMessages,
+    RendererEvent.GetMessagesPaginated,
     RendererEvent.GetMediaPath,
     RendererEvent.CloseBackup,
   ]) {
@@ -43,6 +44,21 @@ export function initializeIpcHandlers(webContents: WebContents) {
     async (_event, dbFile: string, base: string, contactJid: string) => {
       console.log('🍏 Get Messages', contactJid);
       return load.getMessages(dbFile, base, contactJid);
+    },
+  );
+
+  ipcMain.handle(
+    RendererEvent.GetMessagesPaginated,
+    async (
+      _event,
+      dbFile: string,
+      base: string,
+      contactJid: string,
+      limit: number,
+      offset: number,
+    ) => {
+      console.log('🍏 Get Messages Paginated', contactJid, limit, offset);
+      return load.getMessagesPaginated(dbFile, base, contactJid, limit, offset);
     },
   );
 

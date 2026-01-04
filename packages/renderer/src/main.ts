@@ -48,7 +48,7 @@ bootstrapApplication(AppComponent, {
         prefix: '/assets/i18n/',
         suffix: '.json',
       }),
-      defaultLanguage: 'en',
+      fallbackLang: 'en',
     }),
   ],
 });

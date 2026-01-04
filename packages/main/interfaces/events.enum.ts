@@ -4,6 +4,7 @@ export enum RendererEvent {
   Choose = 'choose',
   PickupDialog = 'pickup-dialog',
   GetMessages = 'get-messages',
+  GetMessagesPaginated = 'get-messages-paginated',
   GetMediaPath = 'get-media-path',
   CloseBackup = 'close-backup',
 }

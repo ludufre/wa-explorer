@@ -49,7 +49,10 @@
       "DB_NOT_FOUND": "Banco de dados não encontrado",
       "SESSION_NOT_FOUND": "Conversa não encontrada",
       "NO_MESSAGES": "Nenhuma mensagem encontrada",
-      "BACK_TO_HOME": "Voltar para a lista de conversas"
+      "BACK_TO_HOME": "Voltar para a lista de conversas",
+      "VIDEO_NOT_SUPPORTED": "Seu navegador não suporta vídeo",
+      "AUDIO_NOT_SUPPORTED": "Seu navegador não suporta áudio",
+      "VIEW_ONCE": "Visualizar uma vez"
     }
   }
 }

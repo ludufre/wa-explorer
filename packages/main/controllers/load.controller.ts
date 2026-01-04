@@ -287,6 +287,98 @@ class LoadController {
     };
   }
 
+  getMessagesPaginated(
+    dbFile: string,
+    base: string,
+    contactJid: string,
+    limit: number,
+    offset: number,
+  ) {
+    // Validate parameters
+    if (limit < 1 || limit > 500) limit = 100;
+    if (offset < 0) offset = 0;
+
+    console.log(
+      `🔍 Getting paginated messages for: ${contactJid} (limit: ${limit}, offset: ${offset})`,
+    );
+    console.log('📁 DB:', dbFile);
+
+    if (!fs.existsSync(dbFile)) {
+      console.error('❌ DB file not found');
+      return { ok: 0, msg: 'PAGES.DETAIL.DB_NOT_FOUND' };
+    }
+
+    const db = BetterSqlite3(dbFile, {
+      readonly: true,
+    });
+
+    // Get the chat session to find the Z_PK
+    const session: ISession | undefined = db
+      .prepare('SELECT * FROM ZWACHATSESSION WHERE ZCONTACTJID = ?')
+      .get(contactJid) as ISession | undefined;
+
+    console.log(
+      '📱 Session found:',
+      session ? `Yes (Z_PK: ${session.Z_PK})` : 'No',
+    );
+
+    if (!session) {
+      db.close();
+      console.error('❌ Session not found for contact:', contactJid);
+      return { ok: 0, msg: 'PAGES.DETAIL.SESSION_NOT_FOUND' };
+    }
+
+    // Get total count of messages
+    const countResult: { count: number } = db
+      .prepare('SELECT COUNT(*) as count FROM ZWAMESSAGE WHERE ZCHATSESSION = ?')
+      .get(session.Z_PK) as { count: number };
+
+    const total = countResult.count;
+    console.log(`💬 Total messages: ${total}`);
+
+    // Get paginated messages
+    const messages: IMessage[] = db
+      .prepare(
+        `SELECT * FROM ZWAMESSAGE
+         WHERE ZCHATSESSION = ?
+         ORDER BY ZMESSAGEDATE ASC
+         LIMIT ? OFFSET ?`,
+      )
+      .all(session.Z_PK, limit, offset) as IMessage[];
+
+    console.log(`💬 Messages loaded: ${messages.length}`);
+
+    db.close();
+
+    // Para scroll reverso (carregando mensagens antigas), hasMore = true se offset > 0
+    // Significa que ainda há mensagens anteriores (antes do offset atual)
+    const hasMore = offset > 0;
+
+    return {
+      ok: 1,
+      data: {
+        messages: messages.map(m => ({
+          id: m.Z_PK,
+          from: m.ZFROMJID,
+          to: m.ZTOJID,
+          text: m.ZTEXT,
+          date: m.ZMESSAGEDATE,
+          isFromMe: m.ZISFROMME === 1,
+          type: m.ZMESSAGETYPE,
+          groupMember: m.ZGROUPMEMBER,
+          mediaItemId: m.ZMEDIAITEM || null,
+        })),
+        total,
+        hasMore,
+        offset,
+      },
+      session: {
+        contact: session.ZCONTACTJID,
+        name: session.ZPARTNERNAME,
+      },
+    };
+  }
+
   getMediaPath(dbFile: string, base: string, mediaItemId: number) {
     if (!mediaItemId) return { ok: 0, path: null };
 

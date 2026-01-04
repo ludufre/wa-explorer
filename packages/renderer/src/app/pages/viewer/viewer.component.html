@@ -28,28 +28,41 @@
       </div>
 
       <ion-content class="list-content">
-        <ion-list class="chat-list">
-          @for (s of filteredSessions(); track s.id) {
-            <ion-item
-              button
-              [routerLink]="['detail', s.contact]"
-              routerLinkActive="selected"
-              class="chat-item"
-              lines="none"
-            >
-              <ion-avatar slot="start">
-                <img
-                  [src]="s.picture || 'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' + s.name + '&length=2'"
-                  [alt]="s.name"
-                />
-              </ion-avatar>
-              <ion-label>
-                <h2>{{ s.name }}</h2>
-                <p>{{ s.last | date: 'short' }}</p>
-              </ion-label>
-            </ion-item>
-          }
-        </ion-list>
+        <cdk-virtual-scroll-viewport
+          appendOnly
+          itemSize="50"
+          class="scroll-viewport"
+        >
+          <ion-list class="chat-list">
+            <!-- @for (s of filteredSessions(); track s.id) { -->
+            <ng-container *cdkVirtualFor="let s of filteredSessions()">
+              <ion-item
+                button
+                [routerLink]="['detail', s.contact]"
+                routerLinkActive="selected"
+                class="chat-item"
+                lines="none"
+              >
+                <ion-avatar slot="start">
+                  <img
+                    [src]="
+                      s.picture ||
+                      'https://ui-avatars.com/api/?background=438ECF&color=fff&name=' +
+                        s.name +
+                        '&length=2'
+                    "
+                    [alt]="s.name"
+                  />
+                </ion-avatar>
+                <ion-label>
+                  <h2>{{ s.name }}</h2>
+                  <p>{{ s.last | date: 'short' }}</p>
+                </ion-label>
+              </ion-item>
+            </ng-container>
+            <!-- } -->
+          </ion-list>
+        </cdk-virtual-scroll-viewport>
       </ion-content>
     </div>
 
